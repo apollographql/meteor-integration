@@ -7,7 +7,9 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.3.2.4');
-  api.use('ecmascript');
+  api.use(['ecmascript',
+           'underscore',
+           'accounts-base']);
 
   api.mainModule('main-client.js', 'client');
   api.mainModule('main-server.js', 'server');

@@ -1,3 +1,5 @@
+WIP doesn't work
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -50,6 +52,17 @@ createApolloServer({
   schema,
   resolvers,
 });
+```
+
+Inside your resolvers, if the user is logged in, their id will be  `context.userId`:
+
+```js
+user(root, args, context) {
+  // Only return data if the fetched id matches the current user, for security
+  if (context.userId === args.id) {
+    return Meteor.users.findOne(args.id);
+  }
+}
 ```
 
 # API
