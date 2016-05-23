@@ -23,6 +23,8 @@ meteor npm add --save apollo-client graphql-tools express http-proxy-middleware
 
 ## Client
 
+Connect to the Apollo server with [`createMeteorNetworkInterface`](#createmeteornetworkinterface):
+
 ```js
 import ApolloClient from 'apollo-client';
 import { createMeteorNetworkInterface } from 'meteor/apollo';
@@ -33,6 +35,8 @@ const client = new ApolloClient({
 ```
 
 ## Server
+
+Create the Apollo server with [`createApolloServer`](#createapolloserver):
 
 ```js
 import { createApolloServer } from 'meteor/apollo';
@@ -52,27 +56,26 @@ createApolloServer({
 
 ## createMeteorNetworkInterface
 
-`createMeteorNetworkInterface(options)`
+`createMeteorNetworkInterface(config)`
 
-`options` may contain any of the following fields:
+`config` may contain any of the following fields:
 - `url`: URL of the GraphQL server. Default: `'/graphql'`.
 - `options`: `FetchOptions` passed to [`createNetworkInterface`](http://docs.apollostack.com/apollo-client/index.html#createNetworkInterface). Default: `{}`.
 - `useMeteorAccounts`: Whether to send the current user's login token to the GraphQL server with each request. Default: `true`.
 
 ## createApolloServer
 
-`createApolloServer(apolloConfig, options)`
+`createApolloServer(options, config)`
 
-- [`apolloConfig`](http://docs.apollostack.com/apollo-server/tools.html)
-- `options` may contain any of the following fields:
+- [`options`](http://docs.apollostack.com/apollo-server/tools.html#apolloServer)
+- `config` may contain any of the following fields:
   - `path`: [Path](http://expressjs.com/en/api.html#app.use) of the GraphQL server. Default: `'/graphql'`.
   - `port`: Port for the express server to listen on. Default: `4000`.
-  - `maxAccountsCacheSizeInMB`: User account ids are cached in memory to reduce the response latency on multiple requests from the same user. Default: `XXX`.
-
+  - `maxAccountsCacheSizeInMB`: User account ids are cached in memory to reduce the response latency on multiple requests from the same user. Default: `1`.
 
 # Development
 
-## Run tests
+## Tests
 
 ```bash
 git clone git@github.com:apollostack/meteor-integration.git
