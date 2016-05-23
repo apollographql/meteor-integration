@@ -1,0 +1,25 @@
+{
+  "name": "meteor-apollo",
+  "version": "0.0.1",
+  "description": "Add Apollo to your Meteor app 🚀",
+  "main": "main-server.js",
+  "scripts": {
+    "test": "meteor test-packages ./ --driver-package practicalmeteor:mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollostack/meteor-integration.git"
+  },
+  "author": "Loren Sands-Ramshaw <lorensr+npm@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/apollostack/meteor-integration/issues"
+  },
+  "homepage": "https://github.com/apollostack/meteor-integration#readme",
+  "dependencies": {
+    "apollo-client": "^0.3.9",
+    "express": "^4.13.4",
+    "graphql-tools": "^0.4.1",
+    "http-proxy-middleware": "^0.15.0"
+  }
+}

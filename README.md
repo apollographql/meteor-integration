@@ -18,7 +18,7 @@
 
 ```
 meteor add apollo
-meteor npm add --save apollo-client graphql-tools express http-proxy-middleware
+meteor npm install --save apollo-client graphql-tools express http-proxy-middleware
 ```
 
 ## Client
