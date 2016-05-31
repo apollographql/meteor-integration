@@ -1,6 +1,6 @@
 import './check-npm.js';
 
-import { apolloServer } from 'graphql-tools';
+import { apolloServer } from 'apollo-server';
 import express from 'express';
 import proxyMiddleware from 'http-proxy-middleware';
 import { WebApp } from 'meteor/webapp';
@@ -16,7 +16,7 @@ const defaultConfig = {
 
 export const createApolloServer = (givenOptions, givenConfig) => {
   const config = _.extend(defaultConfig, givenConfig);
-  
+
   const graphQLServer = express();
 
   graphQLServer.use(config.url, apolloServer(async (req) => {
