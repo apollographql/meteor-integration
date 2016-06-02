@@ -2,7 +2,6 @@ import './check-npm.js';
 
 import { apolloServer } from 'apollo-server';
 import express from 'express';
-import proxyMiddleware from 'http-proxy-middleware';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { _ } from 'meteor/underscore';
