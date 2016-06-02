@@ -61,5 +61,5 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   }));
   
   // This redirects all requests to /graphql to our Express GraphQL server
-  WebApp.rawConnectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+  WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
 }
