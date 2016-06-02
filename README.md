@@ -20,7 +20,7 @@ WIP doesn't work
 
 ```
 meteor add apollo
-meteor npm add --save apollo-client apollo-server express http-proxy-middleware
+meteor npm add --save apollo-client apollo-server express
 ```
 
 ## Client
@@ -83,7 +83,6 @@ user(root, args, context) {
 - [`options`](http://docs.apollostack.com/apollo-server/tools.html#apolloServer)
 - `config` may contain any of the following fields:
   - `path`: [Path](http://expressjs.com/en/api.html#app.use) of the GraphQL server. Default: `'/graphql'`.
-  - `port`: Port for the express server to listen on. Default: `4000`.
   - `maxAccountsCacheSizeInMB`: User account ids are cached in memory to reduce the response latency on multiple requests from the same user. Default: `1`.
 
 # Development
