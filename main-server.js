@@ -19,7 +19,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
   const graphQLServer = express();
 
-  graphQLServer.use(config.url, apolloServer(async (req) => {
+  graphQLServer.use(config.path, apolloServer(async (req) => {
     let options,
         user = null;
 
