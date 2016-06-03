@@ -14,7 +14,9 @@ const defaultNetworkInterfaceConfig = {
 export const createMeteorNetworkInterface = (givenConfig) => {
   const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
 
-  const networkInterface = createNetworkInterface(config.url);
+  // this is for SSR
+  const fullUrl = Meteor.absoluteUrl(config.url);
+  const networkInterface = createNetworkInterface(fullUrl);
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
