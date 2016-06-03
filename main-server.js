@@ -2,7 +2,7 @@ import './check-npm.js';
 
 import { apolloServer } from 'apollo-server';
 import express from 'express';
-import proxyMiddleware from 'http-proxy-middleware';
+import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { _ } from 'meteor/underscore';
 
@@ -10,7 +10,6 @@ import { schema, resolvers } from '/imports/api/schema';
 
 const defaultConfig = {
   path: '/graphql',
-  port: 4000,
   maxAccountsCacheSizeInMB: 1
 };
 
@@ -60,11 +59,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
     return options;
   }));
-
-  graphQLServer.listen(config.port, () => console.log(
-    `GraphQL Server is now running on http://localhost:${config.port}`
-  ));
-
+  
   // This redirects all requests to /graphql to our Express GraphQL server
-  WebApp.rawConnectHandlers.use(proxyMiddleware(`http://localhost:${config.port}${config.path}`));
+  WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
 }
