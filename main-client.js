@@ -14,7 +14,7 @@ const defaultNetworkInterfaceConfig = {
 export const createMeteorNetworkInterface = (givenConfig) => {
   const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
 
-  // this is for SSR
+  // For SSR
   const fullUrl = Meteor.absoluteUrl(config.url);
   const networkInterface = createNetworkInterface(fullUrl);
 
@@ -42,15 +42,17 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   return networkInterface;
 };
 
-const defaultConfig = {
-  networkInterface: createMeteorNetworkInterface(),
-  queryTransformer: addTypenameToSelectionSet,
-  // Default to using Mongo _id, must use _id for queries.
-  dataIdFromObject: (result) => {
-    if (result._id && result.__typename) {
-      return result.__typename + result._id;
-    }
-  },
-};
+export const meteorClientConfig = (networkInterfaceConfig) => {
+  return {
+    networkInterface: createMeteorNetworkInterface(networkInterfaceConfig),
+    queryTransformer: addTypenameToSelectionSet,
 
-export const meteorClientConfig = (givenConfig) => (_.extend(defaultConfig, givenConfig));
+    // Default to using Mongo _id, must use _id for queries.
+    dataIdFromObject: (result) => {
+      if (result._id && result.__typename) {
+        const dataId = result.__typename + result._id;
+        return dataId;
+      }
+    },
+  };
+};

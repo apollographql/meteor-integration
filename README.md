@@ -25,15 +25,13 @@ meteor npm add --save apollo-client apollo-server express
 
 ## Client
 
-Connect to the Apollo server with [`createMeteorNetworkInterface`](#createmeteornetworkinterface):
+Connect to the Apollo server with [`meteorClientConfig`](#meteorclientconfig):
 
 ```js
 import ApolloClient from 'apollo-client';
-import { createMeteorNetworkInterface } from 'meteor/apollo';
+import { meteorClientConfig } from 'meteor/apollo';
 
-const client = new ApolloClient({
-  networkInterface: createMeteorNetworkInterface()
-});
+const client = new ApolloClient(meteorClientConfig());
 ```
 
 ## Server
@@ -67,14 +65,24 @@ user(root, args, context) {
 
 # API
 
-## createMeteorNetworkInterface
+## meteorClientConfig
 
-`createMeteorNetworkInterface(config)`
+`meteorClientConfig(networkInterfaceConfig)`
 
-`config` may contain any of the following fields:
+`networkInterfaceConfig` may contain any of the following fields:
 - `url`: URL of the GraphQL server. Default: `'/graphql'`.
 - `options`: `FetchOptions` passed to [`createNetworkInterface`](http://docs.apollostack.com/apollo-client/index.html#createNetworkInterface). Default: `{}`.
 - `useMeteorAccounts`: Whether to send the current user's login token to the GraphQL server with each request. Default: `true`.
+
+Returns a config object for `ApolloClient`:
+
+```
+{
+  networkInterface
+  queryTransformer: addTypenameToSelectionSet
+  dataIdFromObject: object.__typename + object._id
+}
+```
 
 ## createApolloServer
 
