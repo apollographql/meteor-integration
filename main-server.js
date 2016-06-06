@@ -6,8 +6,6 @@ import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { _ } from 'meteor/underscore';
 
-import { schema, resolvers } from '/imports/api/schema';
-
 const defaultConfig = {
   path: '/graphql',
   maxAccountsCacheSizeInMB: 1
