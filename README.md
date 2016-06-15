@@ -72,7 +72,7 @@ user(root, args, context) {
 `meteorClientConfig(networkInterfaceConfig)`
 
 `networkInterfaceConfig` may contain any of the following fields:
-- `url`: URL of the GraphQL server. Default: `'/graphql'`.
+- `path`: path of the GraphQL server. Default: `'/graphql'`.
 - `options`: `FetchOptions` passed to [`createNetworkInterface`](http://docs.apollostack.com/apollo-client/index.html#createNetworkInterface). Default: `{}`.
 - `useMeteorAccounts`: Whether to send the current user's login token to the GraphQL server with each request. Default: `true`.
 

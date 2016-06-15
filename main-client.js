@@ -6,7 +6,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 
 const defaultNetworkInterfaceConfig = {
-  url: '/graphql',
+  path: '/graphql',
   options: {},
   useMeteorAccounts: true
 };
@@ -14,9 +14,15 @@ const defaultNetworkInterfaceConfig = {
 export const createMeteorNetworkInterface = (givenConfig) => {
   const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
 
+  // absoluteUrl adds a '/', so let's remove it first
+  let path = config.path;
+  if (path[0] === '/') {
+    path = path.slice(1);
+  }
+
   // For SSR
-  const fullUrl = Meteor.absoluteUrl(config.url);
-  const networkInterface = createNetworkInterface(fullUrl);
+  const url = Meteor.absoluteUrl(path);
+  const networkInterface = createNetworkInterface(url);
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
