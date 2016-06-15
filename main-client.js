@@ -1,4 +1,4 @@
-import '/check-npm.js';
+import './check-npm.js';
 
 import { createNetworkInterface } from 'apollo-client';
 import { addTypenameToSelectionSet } from 'apollo-client/queries/queryTransform';
