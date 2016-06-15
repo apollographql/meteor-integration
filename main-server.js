@@ -4,6 +4,7 @@ import { apolloServer } from 'apollo-server';
 import express from 'express';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
+import { check } from 'meteor/check';
 import { _ } from 'meteor/underscore';
 
 const defaultConfig = {
