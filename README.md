@@ -1,3 +1,5 @@
+This atmosphere package allows you to use the [Apollo Stack](http://docs.apollostack.com/) in your [Meteor](https://www.meteor.com/) app.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -6,10 +8,10 @@
   - [Client](#client)
   - [Server](#server)
 - [API](#api)
-  - [createMeteorNetworkInterface](#createmeteornetworkinterface)
+  - [meteorClientConfig](#meteorclientconfig)
   - [createApolloServer](#createapolloserver)
 - [Development](#development)
-  - [Run tests](#run-tests)
+  - [Tests](#tests)
   - [Credits](#credits)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -36,7 +38,7 @@ const client = new ApolloClient(meteorClientConfig());
 
 ## Server
 
-Create the Apollo server with [`createApolloServer`](#createapolloserver):
+Define your schema and resolvers, and then set up the Apollo server with [`createApolloServer`](#createapolloserver):
 
 ```js
 import { createApolloServer } from 'meteor/apollo';
@@ -52,16 +54,21 @@ createApolloServer({
 });
 ```
 
-The [GraphiQL](https://github.com/graphql/graphiql) url is http://localhost:3000/graphql
+The [GraphiQL](https://github.com/graphql/graphiql) url is [http://localhost:3000/graphql](http://localhost:3000/graphql)
 
 Inside your resolvers, if the user is logged in, their id will be  `context.userId`:
 
 ```js
-user(root, args, context) {
-  // Only return data if the fetched id matches the current user, for security
-  if (context.userId === args.id) {
-    return Meteor.users.findOne(args.id);
-  }
+export const resolvers = {
+  Query: {
+    async user(root, args, context) {
+      // Only return the current user, for security
+      if (context.userId === args.id) {
+        return await Meteor.users.findOne(context.userId);
+      }
+    },
+  },
+  User: ...
 }
 ```
 
