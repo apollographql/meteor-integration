@@ -1,5 +1,3 @@
-WIP doesn't work
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -17,6 +15,8 @@ WIP doesn't work
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Usage
+
+See also this simple usage example: https://github.com/lorensr/meteor-starter-kit/tree/apollo-package
 
 ```
 meteor add apollo
@@ -100,6 +100,8 @@ It will use the same port as your Meteor server. Don't put a route or static ass
 # Development
 
 ## Tests
+
+TODO broken, see #3
 
 ```bash
 git clone git@github.com:apollostack/meteor-integration.git
