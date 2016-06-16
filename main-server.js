@@ -5,6 +5,7 @@ import express from 'express';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
+// import { Accounts } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 
 const defaultConfig = {
@@ -29,8 +30,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
     options = options || {};
 
     // Get the token from the header
-    if (req.headers.meteorlogintoken) {
-      const token = req.headers.meteorlogintoken;
+    if (req.headers.authorization) {
+      const token = req.headers.authorization;
       check(token, String);
       const hashedToken = Accounts._hashLoginToken(token);
 
@@ -43,8 +44,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
         }});
 
       if (user) {
-        const expiresAt = user.services.resume.loginTokens[0].when;
-        const isExpired = expiresAt < Date.now(); // TODO or new Date()
+        const expiresAt = Accounts._tokenExpiration(user.services.resume.loginTokens[0].when);
+        const isExpired = expiresAt < new Date();
 
         if (!isExpired) {
           if (!options.context) {
@@ -61,4 +62,4 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   
   // This redirects all requests to /graphql to our Express GraphQL server
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
-}
+};

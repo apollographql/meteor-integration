@@ -38,7 +38,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
           request.options.headers = new Headers();
         }
 
-        request.options.headers.MeteorLoginToken = currentUserToken;
+        request.options.headers.Authorization = currentUserToken;
 
         next();
       },
