@@ -5,7 +5,7 @@ import express from 'express';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
-// import { Accounts } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 
 const defaultConfig = {
