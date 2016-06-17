@@ -9,6 +9,5 @@ if (Meteor.isClient) {
   checkNpmVersions({
     'apollo-server': '^0.1.1',
     'express': '^4.13.4',
-    'http-proxy-middleware': '^0.15.0'
   }, 'apollo');
 }
