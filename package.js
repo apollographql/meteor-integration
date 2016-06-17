@@ -10,7 +10,7 @@ Package.onUse(function(api) {
   api.use(['ecmascript',
            'underscore',
            'accounts-base',
-           'tmeasday:check-npm-versions']);
+           'tmeasday:check-npm-versions@0.3.1']);
 
   api.mainModule('main-client.js', 'client');
   api.mainModule('main-server.js', 'server');
