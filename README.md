@@ -22,7 +22,7 @@ See also this simple usage example: https://github.com/lorensr/meteor-starter-ki
 
 ```
 meteor add apollo
-meteor npm add --save apollo-client apollo-server express
+meteor npm install --save apollo-client apollo-server express
 ```
 
 ## Client
