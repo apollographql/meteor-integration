@@ -4,6 +4,10 @@ import { createNetworkInterface } from 'apollo-client';
 import { addTypenameToSelectionSet } from 'apollo-client/queries/queryTransform';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+import { registerGqlTag } from 'apollo-client/gql';
+
+// register gql tag for queries
+registerGqlTag();
 
 const defaultNetworkInterfaceConfig = {
   path: '/graphql',
