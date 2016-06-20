@@ -53,13 +53,19 @@ export const createApolloServer = (givenOptions, givenConfig) => {
           }
 
           options.context.userId = user._id;
+          options.context.user = user;
         }
       }
+    } else {
+      if (options.context) {
+        delete options.context.user;
+      }
+
     }
 
     return options;
   }));
-  
+
   // This redirects all requests to /graphql to our Express GraphQL server
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
 };
