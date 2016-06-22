@@ -71,8 +71,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   
     // Build the schema 
     const executableSchema = makeExecutableSchema({
-      typeDefs: schema,
-      resolvers,
+      typeDefs: config.schema,
+      resolvers: config.resolvers,
       allowUndefinedInResolve: true,
     });
   
