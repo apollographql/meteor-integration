@@ -7,6 +7,8 @@ import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+import { makeExecutableSchema } from 'graphql-tools';
+import graphql from 'graphql';
 
 const defaultConfig = {
   path: '/graphql',
@@ -62,4 +64,24 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   
   // This redirects all requests to /graphql to our Express GraphQL server
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+  
+  return async ({ query, variables }) => {
+    // If userId exists, add it to the context.
+    let { userId = null } = this;
+  
+    // Build the schema 
+    const executableSchema = makeExecutableSchema({
+      typeDefs: config.schema,
+      resolvers: config.resolvers,
+      allowUndefinedInResolve: true,
+    });
+  
+    const { data, errors } = await graphql(executableSchema, query, null, { userId }, variables);
+  
+    if (errors) {
+      throw new Error(errors);
+    }
+  
+    return data;
+  };
 };
