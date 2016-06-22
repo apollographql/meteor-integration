@@ -65,25 +65,23 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   // This redirects all requests to /graphql to our Express GraphQL server
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
   
-  return {
-    call: async ({ query, variables }) => {
-      // If userId exists, add it to the context.
-      let { userId = null } = this;
-    
-      // Build the schema 
-      const executableSchema = makeExecutableSchema({
-        typeDefs: schema,
-        resolvers,
-        allowUndefinedInResolve: true,
-      });
-    
-      const { data, errors } = await graphql(executableSchema, query, null, { userId }, variables);
-    
-      if (errors) {
-        throw new Error(errors);
-      }
-    
-      return data;
+  return async ({ query, variables }) => {
+    // If userId exists, add it to the context.
+    let { userId = null } = this;
+  
+    // Build the schema 
+    const executableSchema = makeExecutableSchema({
+      typeDefs: schema,
+      resolvers,
+      allowUndefinedInResolve: true,
+    });
+  
+    const { data, errors } = await graphql(executableSchema, query, null, { userId }, variables);
+  
+    if (errors) {
+      throw new Error(errors);
     }
-  }
+  
+    return data;
+  };
 };
