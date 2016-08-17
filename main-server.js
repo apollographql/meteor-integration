@@ -1,7 +1,9 @@
 import './check-npm.js';
 
-import { apolloServer } from 'apollo-server';
+import { apolloExpress, graphiqlExpress } from 'apollo-server';
+import bodyParser from 'body-parser';
 import express from 'express';
+
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
@@ -10,15 +12,20 @@ import { _ } from 'meteor/underscore';
 
 const defaultConfig = {
   path: '/graphql',
-  maxAccountsCacheSizeInMB: 1
+  maxAccountsCacheSizeInMB: 1,
+  graphiql : Meteor.isDevelopment,
+  graphiqlPath : '/graphiql',
+  graphiqlOptions : {}
 };
 
 export const createApolloServer = (givenOptions, givenConfig) => {
-  const config = _.extend(defaultConfig, givenConfig);
+
+  let config = _.extend(defaultConfig, givenConfig);
 
   const graphQLServer = express();
 
-  graphQLServer.use(config.path, apolloServer(async (req) => {
+  // GraphQL endpoint
+  graphQLServer.use(config.path, bodyParser.json(), apolloExpress(async (req) => {
     let options,
         user = null;
 
@@ -58,8 +65,14 @@ export const createApolloServer = (givenOptions, givenConfig) => {
     }
 
     return options;
+
   }));
-  
-  // This redirects all requests to /graphql to our Express GraphQL server
+
+  // Start GraphiQL if enabled
+  if (config.graphiql) {
+    graphQLServer.use(config.graphiqlPath, graphiqlExpress(_.extend(config.graphiqlOptions, {endpointURL : config.path})));
+  }
+
+  // This binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
 };
