@@ -34,7 +34,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
     else
       options = givenOptions;
 
-    options = options || {};
+    options = Object.assign({}, options);
 
     // Get the token from the header
     if (req.headers.authorization) {
