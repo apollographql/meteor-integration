@@ -27,7 +27,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
     else
       options = givenOptions;
 
-    options = options || {};
+    options = Object.assign({}, options)
 
     // Get the token from the header
     if (req.headers.authorization) {
@@ -59,7 +59,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
     return options;
   }));
-  
+
   // This redirects all requests to /graphql to our Express GraphQL server
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
 };
