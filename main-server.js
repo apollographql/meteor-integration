@@ -75,4 +75,6 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
   // This binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+  
+  return graphQLServer
 };
