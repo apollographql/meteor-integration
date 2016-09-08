@@ -15,7 +15,8 @@ const defaultConfig = {
   maxAccountsCacheSizeInMB: 1,
   graphiql : Meteor.isDevelopment,
   graphiqlPath : '/graphiql',
-  graphiqlOptions : {}
+  graphiqlOptions : {},
+  configServer: (graphQLServer) => {}
 };
 
 export const createApolloServer = (givenOptions, givenConfig) => {
@@ -23,6 +24,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
   let config = _.extend(defaultConfig, givenConfig);
 
   const graphQLServer = express();
+
+  config.configServer(graphQLServer)
 
   // GraphQL endpoint
   graphQLServer.use(config.path, bodyParser.json(), apolloExpress(async (req) => {
@@ -75,6 +78,4 @@ export const createApolloServer = (givenOptions, givenConfig) => {
 
   // This binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
-  
-  return graphQLServer
 };
