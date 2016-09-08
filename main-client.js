@@ -8,8 +8,21 @@ import { _ } from 'meteor/underscore';
 const defaultNetworkInterfaceConfig = {
   path: '/graphql',
   options: {},
-  useMeteorAccounts: true
+  useMeteorAccounts: true,
+  // Pass a meteor accounts from another connection
+  meteorAccounts: Accounts,
+  // Pass a function if you save the user token in other location than accounts-base default
+  getUserToken: null
 };
+
+const getUserToken = (config) => {
+  if (config.getUserToken) {
+    return config.getUserToken()
+  } else {
+    // if we don't defined a getUserToken function, we use accounts-base default
+    return config.meteorAccounts._storedLoginToken()
+  }
+}
 
 export const createMeteorNetworkInterface = (givenConfig) => {
   const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
@@ -20,14 +33,14 @@ export const createMeteorNetworkInterface = (givenConfig) => {
     path = path.slice(1);
   }
 
-  // For SSR
-  const url = Meteor.absoluteUrl(path);
+  // For SSR - Allows external meteor connections
+  const url = path.includes('http') ? path : Meteor.absoluteUrl(path);
   const networkInterface = createNetworkInterface(url);
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
       applyMiddleware(request, next) {
-        const currentUserToken = Accounts._storedLoginToken();
+        const currentUserToken = getUserToken(config);
 
         if (!currentUserToken) {
           next();
