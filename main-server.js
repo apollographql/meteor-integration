@@ -28,7 +28,7 @@ const defaultOptions = {
 
 export const createApolloServer = (givenOptions, givenConfig) => {
 
-  let config = _.extend(defaultConfig, givenConfig);
+  let config = Object.assign({}, defaultConfig, givenConfig);
 
   const graphQLServer = express();
 
@@ -43,7 +43,7 @@ export const createApolloServer = (givenOptions, givenConfig) => {
       options = givenOptions;
 
     // Merge in the defaults
-    options = _.extend(defaultOptions, options);
+    options = Object.assign({}, defaultOptions, options);
 
     // Get the token from the header
     if (req.headers.authorization) {
