@@ -10,7 +10,7 @@ if (Meteor.isClient) {
     'apollo-server': '^0.2.1',
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "graphql": "^0.6.2",
+    "graphql": "^0.7.0",
     "graphql-tools": "^0.6.2",
   }, 'apollo');
 }
