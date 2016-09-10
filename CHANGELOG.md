@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## VNEXT
+### New features
 
-- `apollo-server`
-  - Pass a function to configure the express server in createApolloServer ([@nicolaslopezj](https://github.com/nicolaslopezj) in [#32](https://github.com/apollostack/graphql-tools/pull/32)).
+- Pass a function to configure the express server in createApolloServer ([@nicolaslopezj](https://github.com/nicolaslopezj) in [#32](https://github.com/apollostack/graphql-tools/pull/32)).
 
 ## [0.1.0] - 2016-08-05
 ### Updated
