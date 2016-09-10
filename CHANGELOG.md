@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## VNEXT
+
+- `apollo-server`
+  - Automatically pass Meteor authentication in GraphiQL.
+
 ## [0.1.0] - 2016-08-05
 ### Updated
 
