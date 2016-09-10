@@ -21,7 +21,7 @@ const defaultConfig = {
 };
 
 const defaultOptions = {
-  formatError: e => ({ 
+  formatError: e => ({
     message: e.message,
     locations: e.locations,
     path: e.path
@@ -30,13 +30,9 @@ const defaultOptions = {
 
 export const createApolloServer = (givenOptions, givenConfig) => {
 
-<<<<<<< HEAD
-  let graphiqlOptions = _.extend(defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
-  let config = _.extend(defaultConfig, givenConfig);
-  config.graphiqlOptions = graphiqlOptions;
-=======
+  let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
   let config = Object.assign({}, defaultConfig, givenConfig);
->>>>>>> apollostack/master
+  config.graphiqlOptions = graphiqlOptions;
 
   const graphQLServer = express();
 
