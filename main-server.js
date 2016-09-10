@@ -15,11 +15,13 @@ const defaultConfig = {
   maxAccountsCacheSizeInMB: 1,
   graphiql : Meteor.isDevelopment,
   graphiqlPath : '/graphiql',
-  graphiqlOptions : {}
+  graphiqlOptions : {
+    passHeader : "'Authorization': localStorage['Meteor.loginToken']"
+  }
 };
 
 const defaultOptions = {
-  formatError: e => ({ 
+  formatError: e => ({
     message: e.message,
     locations: e.locations,
     path: e.path
@@ -28,7 +30,9 @@ const defaultOptions = {
 
 export const createApolloServer = (givenOptions, givenConfig) => {
 
+  let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
   let config = Object.assign({}, defaultConfig, givenConfig);
+  config.graphiqlOptions = graphiqlOptions;
 
   const graphQLServer = express();
 
