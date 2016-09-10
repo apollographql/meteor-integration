@@ -20,11 +20,23 @@ const defaultConfig = {
   }
 };
 
+const defaultOptions = {
+  formatError: e => ({ 
+    message: e.message,
+    locations: e.locations,
+    path: e.path
+  }),
+};
+
 export const createApolloServer = (givenOptions, givenConfig) => {
 
+<<<<<<< HEAD
   let graphiqlOptions = _.extend(defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
   let config = _.extend(defaultConfig, givenConfig);
   config.graphiqlOptions = graphiqlOptions;
+=======
+  let config = Object.assign({}, defaultConfig, givenConfig);
+>>>>>>> apollostack/master
 
   const graphQLServer = express();
 
@@ -38,7 +50,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
     else
       options = givenOptions;
 
-    options = Object.assign({}, options);
+    // Merge in the defaults
+    options = Object.assign({}, defaultOptions, options);
 
     // Get the token from the header
     if (req.headers.authorization) {
