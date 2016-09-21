@@ -19,7 +19,7 @@ const defaultConfig = {
 };
 
 const defaultOptions = {
-  formatError: e => ({ 
+  formatError: e => ({
     message: e.message,
     locations: e.locations,
     path: e.path
@@ -64,7 +64,10 @@ export const createApolloServer = (givenOptions, givenConfig) => {
         const isExpired = expiresAt < new Date();
 
         if (!isExpired) {
-          if (!options.context) {
+          if (options.context) {
+            // don't mutate the context provided in options
+            options.context = Object.assign({}, options.context);
+          } else {
             options.context = {};
           }
 

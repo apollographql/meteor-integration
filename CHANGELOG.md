@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.1] - 2016-09-21
+### Fixed
+
+- Fix userId persisting in options.context (reported in [#37](https://github.com/apollostack/meteor-integration/pull/37))
+
 ## [0.1.0] - 2016-08-05
 ### Updated
 
