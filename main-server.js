@@ -78,6 +78,8 @@ export const createApolloServer = (givenOptions, givenConfig) => {
           options.context.userId = user._id;
         }
       }
+    } else {
+      options.context.userId = null;
     }
 
     return options;
