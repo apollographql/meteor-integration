@@ -7,7 +7,7 @@ if (Meteor.isClient) {
   }, 'apollo');
 } else {
   checkNpmVersions({
-    'apollo-server': '^0.2.1',
+    'apollo-server': '^0.3.0',
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "graphql": "^0.7.0",

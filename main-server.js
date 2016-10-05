@@ -29,7 +29,7 @@ const defaultOptions = {
   }),
 };
 
-export const createApolloServer = (givenOptions, givenConfig) => {
+export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
 
   let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
   let config = Object.assign({}, defaultConfig, givenConfig);

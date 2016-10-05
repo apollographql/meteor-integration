@@ -1,6 +1,6 @@
 accounts-base@1.2.9
 allow-deny@1.0.5
-apollo@0.1.1
+apollo@0.1.2
 autoupdate@1.2.11
 babel-compiler@6.9.0
 babel-runtime@0.1.10
@@ -30,7 +30,7 @@ htmljs@1.0.10
 http@1.1.8
 id-map@1.0.8
 jquery@1.11.9
-local-test:apollo@0.1.1
+local-test:apollo@0.1.2
 localstorage@1.0.11
 logging@1.1.14
 meteor@1.2.16
