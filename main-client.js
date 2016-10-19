@@ -22,7 +22,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
 
   // For SSR
   const url = Meteor.absoluteUrl(path);
-  const networkInterface = createNetworkInterface(url);
+  const networkInterface = createNetworkInterface({ uri: url });
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
