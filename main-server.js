@@ -1,6 +1,6 @@
 import './check-npm.js';
 
-import { apolloExpress, graphiqlExpress } from 'apollo-server';
+import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
 
@@ -40,7 +40,7 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
   config.configServer(graphQLServer)
 
   // GraphQL endpoint
-  graphQLServer.use(config.path, bodyParser.json(), apolloExpress(async (req) => {
+  graphQLServer.use(config.path, bodyParser.json(), graphqlExpress(async (req) => {
     let options,
         user = null;
 
