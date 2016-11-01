@@ -21,8 +21,8 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   }
 
   // For SSR
-  const url = Meteor.absoluteUrl(path);
-  const networkInterface = createNetworkInterface(url);
+  const uri = Meteor.absoluteUrl(path);
+  const networkInterface = createNetworkInterface({ uri });
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
