@@ -8,8 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Updated
 
 - `apollo-client` [v0.5.x](https://github.com/apollostack/apollo-client/blob/master/CHANGELOG.md#v050)
-- Update createNetworkInterface call to match new signature ([@jasonphillips](https://github.com/jasonphillips) in [#43](https://github.com/apollostack/meteor-integration/pull/43)).
+- Updated createNetworkInterface call to match new signature ([@jasonphillips](https://github.com/jasonphillips) in [#43](https://github.com/apollostack/meteor-integration/pull/43)).
 - `graphql-server` [v0.4.2](https://github.com/apollostack/graphql-server/blob/master/CHANGELOG.md#v042)
+
+### Added
+
+- Added the logged-in user's doc to `context.user`
 
 ## [0.1.2] - 2016-10-04
 ### Added
