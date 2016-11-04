@@ -1,4 +1,4 @@
-Use the [Apollo Stack](http://docs.apollostack.com/) in your [Meteor](https://www.meteor.com/) app.
+Use the [Apollo Stack](http://dev.apollodata.com/) in your [Meteor](https://www.meteor.com/) app.
 
 ```sh
 meteor add apollo
@@ -6,7 +6,7 @@ meteor add apollo
 
 # Docs
 
-**[The docs](https://github.com/apollostack/meteor-integration/)**
+**[The docs](http://dev.apollodata.com/core/meteor.html)**
 
 # Package dev
 
