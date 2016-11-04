@@ -29,6 +29,10 @@ const defaultOptions = {
   }),
 };
 
+if (Meteor.isDevelopment) {
+  defaultOptions.debug = true;
+}
+
 export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
 
   let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
@@ -60,14 +64,12 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
 
       // Get the user from the database
       user = await Meteor.users.findOne(
-        {"services.resume.loginTokens.hashedToken": hashedToken},
-        {fields: {
-          _id: 1,
-          'services.resume.loginTokens.$': 1
-        }});
+        {"services.resume.loginTokens.hashedToken": hashedToken}
+      );
 
       if (user) {
-        const expiresAt = Accounts._tokenExpiration(user.services.resume.loginTokens[0].when);
+        const loginToken = _.findWhere(user.services.resume.loginTokens, { hashedToken });
+        const expiresAt = Accounts._tokenExpiration(loginToken.when);
         const isExpired = expiresAt < new Date();
 
         if (!isExpired) {
@@ -79,6 +81,7 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
           }
 
           options.context.userId = user._id;
+          options.context.user = user;
         }
       }
     }
