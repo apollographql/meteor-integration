@@ -59,6 +59,8 @@ export const meteorClientConfig = (networkInterfaceConfig) => {
         const dataId = result.__typename + result._id;
         return dataId;
       }
+      
+      return null;
     },
   };
 };
