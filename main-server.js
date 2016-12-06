@@ -55,6 +55,12 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
 
     // Merge in the defaults
     options = Object.assign({}, defaultOptions, options);
+    if (options.context) {
+      // don't mutate the context provided in options
+      options.context = Object.assign({}, options.context);
+    } else {
+      options.context = {};
+    }
 
     // Get the token from the header
     if (req.headers.authorization) {
@@ -73,13 +79,6 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
         const isExpired = expiresAt < new Date();
 
         if (!isExpired) {
-          if (options.context) {
-            // don't mutate the context provided in options
-            options.context = Object.assign({}, options.context);
-          } else {
-            options.context = {};
-          }
-
           options.context.userId = user._id;
           options.context.user = user;
         }
