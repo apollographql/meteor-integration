@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.2.1] - 2016-12-23
+### Added
+
+- Support for `v0.8.x` of `graphql` [#54](https://github.com/apollostack/meteor-integration/pull/54)
+- When user is not logged in, provide `{}` as context [#55](https://github.com/apollostack/meteor-integration/pull/55)
+
 ## [0.2.0] - 2016-11-04
 ### Updated
 
