@@ -27,7 +27,8 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   if (config.useMeteorAccounts) {
     networkInterface.use([{
       applyMiddleware(request, next) {
-        const currentUserToken = Accounts._storedLoginToken();
+        // Accounts._storedLoginToken refers to local storage existing only client-side
+        const currentUserToken = config.loginToken ? config.loginToken : Meteor.isClient ? Accounts._storedLoginToken() : null;
 
         if (!currentUserToken) {
           next();
