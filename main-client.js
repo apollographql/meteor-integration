@@ -2,6 +2,7 @@ import './check-npm.js';
 
 import { createNetworkInterface } from 'apollo-client';
 import { Accounts } from 'meteor/accounts-base';
+import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 
 const defaultNetworkInterfaceConfig = {
@@ -49,6 +50,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
 
 export const meteorClientConfig = (networkInterfaceConfig) => {
   return {
+    ssrMode: Meteor.isServer,
     networkInterface: createMeteorNetworkInterface(networkInterfaceConfig),
 
     // Default to using Mongo _id, must use _id for queries.

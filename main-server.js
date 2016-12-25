@@ -10,6 +10,8 @@ import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 
+export { createMeteorNetworkInterface, meteorClientConfig } from './main-client';
+
 const defaultConfig = {
   path: '/graphql',
   maxAccountsCacheSizeInMB: 1,
