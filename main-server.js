@@ -9,6 +9,7 @@ import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+export { meteorClientConfig, createMeteorNetworkInterface } from './main-client';
 
 const defaultConfig = {
   path: '/graphql',
