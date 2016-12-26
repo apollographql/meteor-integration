@@ -3,12 +3,14 @@ import './check-npm.js';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
-
+import { createServer } from 'http';
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+
 export { meteorClientConfig, createMeteorNetworkInterface } from './main-client';
 
 const defaultConfig = {
@@ -19,6 +21,8 @@ const defaultConfig = {
   graphiqlOptions : {
     passHeader : "'Authorization': localStorage['Meteor.loginToken']"
   },
+  useSubscription: true,
+  subscriptionPort: 8080,
   configServer: (graphQLServer) => {},
 };
 
@@ -35,9 +39,9 @@ if (Meteor.isDevelopment) {
 }
 
 export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
-
-  let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, givenConfig.graphiqlOptions);
-  let config = Object.assign({}, defaultConfig, givenConfig);
+  const { subscriptionManager, ...restOfConfig } = givenConfig;
+  let graphiqlOptions = Object.assign({}, defaultConfig.graphiqlOptions, restOfConfig.graphiqlOptions);
+  let config = Object.assign({}, defaultConfig, restOfConfig);
   config.graphiqlOptions = graphiqlOptions;
 
   const graphQLServer = express();
@@ -95,6 +99,26 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
     graphQLServer.use(config.graphiqlPath, graphiqlExpress(_.extend(config.graphiqlOptions, {endpointURL : config.path})));
   }
 
+  // create http server for subscription
+  const server = createServer(graphQLServer);
+
   // This binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+
+  // Add subscriptionManager here
+  if (config.useSubscription) {
+    if (!subscriptionManager) {
+      throw new Meteor.Error('SubscriptionManager which is mandatory missing.');
+    }
+    new SubscriptionServer({
+      subscriptionManager,
+    }, server);
+    try {
+      server.listen(config.subscriptionPort, () => {
+        console.log('Subscription manager running ' + config.subscriptionPort);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 };
