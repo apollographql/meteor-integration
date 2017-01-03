@@ -8,6 +8,30 @@ meteor add apollo
 
 **[The docs](http://dev.apollodata.com/core/meteor.html)**
 
+# Apollo Optics
+
+See below for a minimal example with Apollo Optics integration
+
+```js
+import { createApolloServer } from 'meteor/apollo';
+import OpticsAgent from 'optics-agent';
+
+import executableSchema from 'schema.js';
+
+OpticsAgent.instrumentSchema(executableSchema);
+
+createApolloServer(req => ({
+  schema: executableSchema,
+  context: {
+    opticsContext: OpticsAgent.context(req),
+  },
+}), {
+  configServer: (graphQLServer) => {
+    graphQLServer.use('/graphql', OpticsAgent.middleware());
+  },
+});
+```
+
 # Package dev
 
 ## Tests
