@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+- Export `createMeteorNetworkInterface` and `meteorClientConfig` server-side to allow server-side rendering, accept a `loginToken` option in the config of Apollo Client (for example the cookie from `meteorhacks:fast-render` used for SSR) [#57](https://github.com/apollostack/meteor-integration/pull/57)
+
 ## [0.2.1] - 2016-12-23
 ### Added
 
