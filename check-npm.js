@@ -3,7 +3,7 @@ import { checkNpmVersions } from 'meteor/tmeasday:check-npm-versions';
 
 if (Meteor.isClient) {
   checkNpmVersions({
-    'apollo-client': '^0.5.0',
+    'apollo-client': '^0.7.0',
   }, 'apollo');
 } else {
   checkNpmVersions({
