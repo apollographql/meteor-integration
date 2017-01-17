@@ -20,6 +20,7 @@ Package.onTest(function(api) {
   api.use(['ecmascript',
            'practicalmeteor:mocha',
            'practicalmeteor:chai',
+           'http',
            'apollo']);
 
   api.mainModule('tests/client.js', 'client');

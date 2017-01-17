@@ -12,13 +12,12 @@ meteor add apollo
 
 ## Tests
 
-TODO broken, see #3
-
 ```bash
 git clone git@github.com:apollostack/meteor-integration.git
 cd meteor-integration
-meteor test-packages ./ --driver-package practicalmeteor:mocha
-open localhost:3000
+npm install
+npm run test
+open http://localhost:3000
 ```
 
 ## Credits
