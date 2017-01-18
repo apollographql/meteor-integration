@@ -8,8 +8,8 @@ const defaultNetworkInterfaceConfig = {
   path: '/graphql', // default graphql server endpoint
   opts: {}, // additional fetch options like `credentials` or `headers`
   useMeteorAccounts: true, // if true, send an eventual Meteor login token to identify the current user with every request
-  batchingInterface: false, // if true, use a BatchedNetworkInterface instead of a NetworkInterface
-  batchInterval: batchingInterface ? 10 : undefined, // if 'batchingInterface' is true, the batch interval will be 10ms by default else fallback to undefined (= won't be given to the Apollo client)
+  batchingInterface: true, // use a BatchingNetworkInterface by default instead of a NetworkInterface
+  batchInterval: 10, // default batch interval
 };
 
 export const createMeteorNetworkInterface = (givenConfig) => {
@@ -24,13 +24,22 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   // allow the use of a batching network interface; if the options.batchingInterface is not specified, fallback to the standard network interface 
   const interfaceToUse = config.batchingInterface ? createBatchingNetworkInterface : createNetworkInterface;
   
-  // For SSR
-  const uri = Meteor.absoluteUrl(path);
-  const networkInterface = interfaceToUse({
-    uri,
-    opts,
-    batchInterval,
-  });
+  // default interface options
+  let interfaceOptions = {
+    uri: Meteor.absoluteUrl(path),
+  };
+
+  // if a BatchingNetworkInterface is used with a correct batch interval, add it to the options
+  if(config.batchingInterface && config.batchInterval) {
+    interfaceOptions.batchInterval = config.batchInterval;
+  }
+
+  // if 'fetch' has been configured to be called with specific opts, add it to the options
+  if(!_.isEmpty(opts)) {
+    interfaceOptions.opts = config.opts;  
+  }
+  
+  const networkInterface = interfaceToUse(interfaceOptions);
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
