@@ -35,7 +35,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   }
 
   // if 'fetch' has been configured to be called with specific opts, add it to the options
-  if(!_.isEmpty(opts)) {
+  if(!_.isEmpty(config.opts)) {
     interfaceOptions.opts = config.opts;  
   }
   
