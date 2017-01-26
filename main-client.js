@@ -37,6 +37,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
         let currentUserToken = cookieLoginToken || localStorageLoginToken;
 
         // ...a login token has been passed to the config, however the "true" one is different ⚠️
+        // https://github.com/apollostack/meteor-integration/pull/57/files#r96745502
         if (Meteor.isClient && cookieLoginToken && cookieLoginToken !== localStorageLoginToken) {
           // be sure to pass the right token to the request!
           currentUserToken = localStorageLoginToken; 
