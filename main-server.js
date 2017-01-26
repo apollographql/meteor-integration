@@ -88,7 +88,6 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
     }
 
     return options;
-
   }));
 
   // Start GraphiQL if enabled

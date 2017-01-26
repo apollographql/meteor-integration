@@ -22,9 +22,9 @@ export const createMeteorNetworkInterface = (givenConfig) => {
     path = path.slice(1);
   }
 
-  // allow the use of a batching network interface; if the options.batchingInterface is not specified, fallback to the standard network interface 
+  // allow the use of a batching network interface; if the options.batchingInterface is not specified, fallback to the standard network interface
   const interfaceToUse = config.batchingInterface ? createBatchingNetworkInterface : createNetworkInterface;
-  
+
   // default interface options
   let interfaceOptions = {
     uri: Meteor.absoluteUrl(path),
@@ -36,21 +36,21 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   }
 
   // if 'fetch' has been configured to be called with specific opts, add it to the options
-  if(!_.isEmpty(opts)) {
-    interfaceOptions.opts = config.opts;  
+  if(!_.isEmpty(config.opts)) {
+    interfaceOptions.opts = config.opts;
   }
-  
+
   const networkInterface = interfaceToUse(interfaceOptions);
 
   if (config.useMeteorAccounts) {
     networkInterface.use([{
       applyMiddleware(request, next) {
-        
+
         // cookie login token created by meteorhacks:fast-render and caught during server-side rendering by rr:react-router-ssr
         const { loginToken: cookieLoginToken } = config;
         // Meteor accounts-base login token stored in local storage, only exists client-side
         const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
-        
+
         // on initial load, prefer to use the token grabbed server-side if existing
         let currentUserToken = cookieLoginToken || localStorageLoginToken;
 
@@ -58,7 +58,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
         // https://github.com/apollostack/meteor-integration/pull/57/files#r96745502
         if (Meteor.isClient && cookieLoginToken && cookieLoginToken !== localStorageLoginToken) {
           // be sure to pass the right token to the request!
-          currentUserToken = localStorageLoginToken; 
+          currentUserToken = localStorageLoginToken;
         }
 
         if (!currentUserToken) {
@@ -91,7 +91,7 @@ export const meteorClientConfig = (networkInterfaceConfig) => {
         const dataId = result.__typename + result._id;
         return dataId;
       }
-      
+
       return null;
     },
   };
