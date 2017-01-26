@@ -2,6 +2,7 @@ import './check-npm.js';
 
 import { createNetworkInterface } from 'apollo-client';
 import { Accounts } from 'meteor/accounts-base';
+import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 
 const defaultNetworkInterfaceConfig = {
@@ -26,7 +27,21 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   if (config.useMeteorAccounts) {
     networkInterface.use([{
       applyMiddleware(request, next) {
-        const currentUserToken = Accounts._storedLoginToken();
+        
+        // cookie login token created by meteorhacks:fast-render and caught during server-side rendering by rr:react-router-ssr
+        const { loginToken: cookieLoginToken } = config;
+        // Meteor accounts-base login token stored in local storage, only exists client-side
+        const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
+        
+        // on initial load, prefer to use the token grabbed server-side if existing
+        let currentUserToken = cookieLoginToken || localStorageLoginToken;
+
+        // ...a login token has been passed to the config, however the "true" one is different ⚠️
+        // https://github.com/apollostack/meteor-integration/pull/57/files#r96745502
+        if (Meteor.isClient && cookieLoginToken && cookieLoginToken !== localStorageLoginToken) {
+          // be sure to pass the right token to the request!
+          currentUserToken = localStorageLoginToken; 
+        }
 
         if (!currentUserToken) {
           next();
@@ -49,6 +64,7 @@ export const createMeteorNetworkInterface = (givenConfig) => {
 
 export const meteorClientConfig = (networkInterfaceConfig) => {
   return {
+    ssrMode: Meteor.isServer,
     networkInterface: createMeteorNetworkInterface(networkInterfaceConfig),
 
     // Default to using Mongo _id, must use _id for queries.
