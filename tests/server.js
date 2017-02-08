@@ -4,13 +4,37 @@ import { createApolloServer } from 'meteor/apollo';
 
 import { makeExecutableSchema } from 'graphql-tools';
 
-describe('server', function() {
-  it('works', async function() {
+describe('Graphql Server', function() {
+  
+  // create schema
+  const typeDefs = [`
+    type Query {
+      test(who: String): String
+      author: Author
+      person: Person
+    }
     
-    // create schema
-    const typeDefs = [`type Query { test(who: String): String }`];
-    const resolvers = { Query: { test: (root, { who }) => `Hello ${who}`, } };
-    const schema = makeExecutableSchema({ typeDefs, resolvers, });
+    type Author {
+      firstName: String
+      lastName: String
+    }
+    
+    type Person {
+      name: String
+    }
+  `];
+  
+  const resolvers = {
+    Query: {
+      test: (root, { who }) => `Hello ${who}`, 
+      author: __ => ({firstName: 'John', lastName: 'Smith'}),
+      person: __ => ({name: 'John Smith'}),
+    } 
+  };
+  
+  const schema = makeExecutableSchema({ typeDefs, resolvers, });
+  
+  it('should create an express graphql server accepting a test query', async function() {
     
     // instantiate the apollo server
     const apolloServer = createApolloServer({ schema, });
@@ -27,6 +51,6 @@ describe('server', function() {
     });
     
   });
-
+  
 });
   
