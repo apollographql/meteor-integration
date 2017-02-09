@@ -1,5 +1,6 @@
 import { assert } from 'meteor/practicalmeteor:chai';
 import { HTTP } from 'meteor/http';
+import { Random } from 'meteor/random';
 import { createApolloServer } from 'meteor/apollo';
 
 import { makeExecutableSchema } from 'graphql-tools';
@@ -12,6 +13,7 @@ describe('Graphql Server', function() {
       test(who: String): String
       author: Author
       person: Person
+      randomString: String
     }
     
     type Author {
@@ -29,7 +31,8 @@ describe('Graphql Server', function() {
       test: (root, { who }) => `Hello ${who}`, 
       author: __ => ({firstName: 'John', lastName: 'Smith'}),
       person: __ => ({name: 'John Smith'}),
-    } 
+      randomString: __ => Random.id(),
+    }, 
   };
   
   const schema = makeExecutableSchema({ typeDefs, resolvers, });

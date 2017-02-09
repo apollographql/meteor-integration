@@ -21,6 +21,7 @@ Package.onTest(function(api) {
            'practicalmeteor:mocha',
            'practicalmeteor:chai',
            'http',
+           'random',
            'apollo']);
 
   api.mainModule('tests/client.js', 'client');

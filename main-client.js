@@ -13,7 +13,7 @@ const defaultNetworkInterfaceConfig = {
   batchInterval: 10, // default batch interval
 };
 
-export const createMeteorNetworkInterface = (givenConfig) => {
+export const createMeteorNetworkInterface = (givenConfig = {}) => {
   const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
 
   // absoluteUrl adds a '/', so let's remove it first
@@ -80,8 +80,12 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   return networkInterface;
 };
 
-export const meteorClientConfig = (networkInterfaceConfig) => {
+export const meteorClientConfig = (globalConfig = {}) => {
+  // destructure general apollo client configuration from network interface configuration
+  const { queryDeduplication = false, ...networkInterfaceConfig } = globalConfig;
+  
   return {
+    queryDeduplication,
     ssrMode: Meteor.isServer,
     networkInterface: createMeteorNetworkInterface(networkInterfaceConfig),
 
