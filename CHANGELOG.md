@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.3.1]
+### Fixed
+
+- Fixed bug in `v0.3.0` [#69](https://github.com/apollographql/meteor-integration/issues/69)
+
 ## [0.3.0] - 2017-02-08
 AKA The Xavier Release 👍
 
