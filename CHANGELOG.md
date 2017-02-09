@@ -4,7 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.3.0] - 2017-02-08
+AKA The Xavier Release 👍
+
+### Updated
+
+- `apollo-client` [`^0.7.0 || ^0.8.0'`](https://github.com/apollographql/apollo-client/blob/master/CHANGELOG.md#080)
+- `apollo-server-express` [`^0.5.0`](https://github.com/apollographql/graphql-server/blob/master/CHANGELOG.md#v050)
+
+### Added
+
 - Export `createMeteorNetworkInterface` and `meteorClientConfig` server-side to allow server-side rendering, accept a `loginToken` option in the config of Apollo Client (for example the cookie from `meteorhacks:fast-render` used for SSR) [#57](https://github.com/apollostack/meteor-integration/pull/57)
+- Tests! [#63](https://github.com/apollographql/meteor-integration/pull/63) and [#68](https://github.com/apollographql/meteor-integration/pull/68)
 
 ## [0.2.1] - 2016-12-23
 ### Added
