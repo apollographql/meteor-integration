@@ -1,10 +1,8 @@
-Use the [Apollo Stack](http://dev.apollodata.com/) in your [Meteor](https://www.meteor.com/) app.
+Use the [Apollo GraphQL Client and Server](http://dev.apollodata.com/) in your [Meteor](https://www.meteor.com/) app.
 
 ```sh
 meteor add apollo
 ```
-
-# Docs
 
 **[The docs](http://dev.apollodata.com/core/meteor.html)**
 
@@ -19,6 +17,8 @@ npm install
 npm run test
 open http://localhost:3000
 ```
+
+Ignore the npm peer requirements warning that appears on client and server consoles.
 
 ## Credits
 
