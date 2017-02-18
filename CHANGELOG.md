@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+### Added
+
+-  Add query deduplication option for `meteorClientConfig` [#70](https://github.com/apollographql/meteor-integration/pull/70)
 
 ## [0.3.1]
 ### Fixed
