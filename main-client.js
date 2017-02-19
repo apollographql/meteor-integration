@@ -1,6 +1,7 @@
 import './check-npm.js';
 
 import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-client';
+import 'isomorphic-fetch';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
