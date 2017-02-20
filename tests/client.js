@@ -121,7 +121,7 @@ describe('User Accounts', function() {
         applyMiddleware: (request, next) => {
           if (request.options.headers) {
             // grab the login token from the request and assign it to the test token
-            token = request.options.headers.Authorization;
+            token = request.options.headers['meteor-login-token'];
           }
           next();
         },
