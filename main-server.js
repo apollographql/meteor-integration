@@ -18,7 +18,7 @@ const defaultConfig = {
   graphiql : Meteor.isDevelopment,
   graphiqlPath : '/graphiql',
   graphiqlOptions : {
-    passHeader : "'Authorization': localStorage['Meteor.loginToken']"
+    passHeader : "'meteor-login-token': localStorage['Meteor.loginToken']"
   },
   configServer: (graphQLServer) => {},
 };
@@ -65,8 +65,8 @@ export const createApolloServer = (givenOptions = {}, givenConfig = {}) => {
     }
 
     // Get the token from the header
-    if (req.headers.authorization) {
-      const token = req.headers.authorization;
+    if (req.headers['meteor-login-token']) {
+      const token = req.headers['meteor-login-token'];
       check(token, String);
       const hashedToken = Accounts._hashLoginToken(token);
 
