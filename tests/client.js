@@ -39,10 +39,61 @@ const personResult = {
   },
 };
 
-describe('Network interface', function() {
+describe('Meteor Client config', () => {
+  it('should accept a custom configuration object extending the default ones', () => {
+    const clientConfig = meteorClientConfig({
+      addTypename: false, // this is not a default option of the meteorClientConfig
+    });
+    
+    assert.isFalse(clientConfig.addTypename);
+  });
   
-  it('should create a network interface', function() {
-    assert.ok(createMeteorNetworkInterface({batchingInterface: false}));
+  it('should replace some options while keeping the other options', () => {
+    
+    const fakeCustomInterface = {
+      fakeProperty: 42,
+    };  
+    
+    // replace the default network interface to use by a fake one
+    // and replace the normalization function
+    const clientConfig = meteorClientConfig({
+      networkInterface: fakeCustomInterface,
+      dataIdFromObject: null,
+    });
+    
+    // we should still have access the ssrMode default configuration value
+    assert.deepEqual(clientConfig, {
+      networkInterface: {
+        fakeProperty: 42,
+      },
+      dataIdFromObject: null,
+      ssrMode: false,
+    });
+  });
+  
+  it('should extend the default config of the network interface', () => {
+    
+    // extend the opts ultimately passed to fetch
+    const networkInterface = createMeteorNetworkInterface({
+      opts: {
+        credentials: 'same-origin',
+      },
+    });  
+    
+    const clientConfig = meteorClientConfig({ networkInterface });
+    
+    // ApolloClient's 'createNetworkInterface' assign 'opts' to '_opts' in its constructor
+    assert.deepEqual(clientConfig.networkInterface._opts, { credentials: 'same-origin' });
+  });
+});
+
+describe('Network interface', () => {
+  
+  it('should create a network interface and not a batching interface', () => {
+    const networkInterface = createMeteorNetworkInterface({ batchingInterface: false });
+    
+    // as opposed to HTTPBatchedNetworkInterface
+    assert.equal(networkInterface.constructor.name, 'HTTPFetchNetworkInterface');
   });
   
 });
@@ -65,7 +116,7 @@ describe('Query deduplication', () => {
 
     // if deduplication happened, result2.data will equal data.
     return Promise.all([q1, q2]).then(([result1, result2]) => {
-      expect(result1.data).to.not.equal(result2.data);
+      assert.notDeepEqual(result1.data, result2.data);
     });
   });
 

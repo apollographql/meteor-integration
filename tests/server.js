@@ -47,7 +47,7 @@ describe('Graphql Server', function() {
       data: { query: '{ test(who: "World") }' }
     });
     
-    expect(queryResult).to.deep.equal({
+    assert.deepEqual(queryResult, {
       data: {
         test: 'Hello World'
       }
