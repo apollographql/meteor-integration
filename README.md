@@ -1,10 +1,13 @@
-Use the [Apollo GraphQL Client and Server](http://dev.apollodata.com/) in your [Meteor](https://www.meteor.com/) app.
+Use the [Apollo GraphQL](http://dev.apollodata.com/) client and server in your [Meteor](https://www.meteor.com/) app.
 
 ```sh
 meteor add apollo
 ```
 
-**[The docs](http://dev.apollodata.com/core/meteor.html)**
+Read **[the docs](http://dev.apollodata.com/core/meteor.html)**
+
+Check out the **[code tour](https://www.codetours.xyz/tour/xavcz/meteor-apollo-codetour)** if you'd like to see how this small package is implemented.
+
 
 # Package dev
 

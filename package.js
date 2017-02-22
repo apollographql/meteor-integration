@@ -22,6 +22,7 @@ Package.onTest(function(api) {
            'practicalmeteor:chai',
            'http',
            'random',
+           'accounts-base',
            'apollo']);
 
   api.mainModule('tests/client.js', 'client');

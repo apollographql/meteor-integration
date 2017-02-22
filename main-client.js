@@ -1,6 +1,7 @@
 import './check-npm.js';
 
 import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-client';
+import 'isomorphic-fetch';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
@@ -48,38 +49,42 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
   const networkInterface = interfaceToUse(interfaceOptions);
 
   if (config.useMeteorAccounts) {
-    networkInterface.use([{
-      applyMiddleware(request, next) {
+    // possible cookie login token created by meteorhacks:fast-render 
+    // and passed to the Apollo Client during server-side rendering
+    const { loginToken } = config;
 
-        // cookie login token created by meteorhacks:fast-render and caught during server-side rendering by rr:react-router-ssr
-        const { loginToken: cookieLoginToken } = config;
-        // Meteor accounts-base login token stored in local storage, only exists client-side
-        const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
+    if (Meteor.isClient && loginToken) {
+      // note: as it's not possible to stop a request,
+      // should this be handled somehow server-side?
+      console.error('[Meteor Apollo Integration] The current user is not handled with your GraphQL requests: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.');
+    } else {
+      networkInterface.use([{
+        applyMiddleware(request, next) {
+          
+          // Meteor accounts-base login token stored in local storage,
+          // only exists client-side as of Meteor 1.4, will exist with Meteor 1.5
+          const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
+          
+          // define a current user token if existing 
+          // ex: passed during server-side rendering or grabbed from local storage
+          let currentUserToken = localStorageLoginToken || loginToken;
+          
+          if (!currentUserToken) {
+            next();
+            return;
+          }
+          
+          if (!request.options.headers) {
+            // Create the header object if needed.
+            request.options.headers = new Headers();
+          }
 
-        // on initial load, prefer to use the token grabbed server-side if existing
-        let currentUserToken = cookieLoginToken || localStorageLoginToken;
-
-        // ...a login token has been passed to the config, however the "true" one is different ⚠️
-        // https://github.com/apollostack/meteor-integration/pull/57/files#r96745502
-        if (Meteor.isClient && cookieLoginToken && cookieLoginToken !== localStorageLoginToken) {
-          // be sure to pass the right token to the request!
-          currentUserToken = localStorageLoginToken;
-        }
-
-        if (!currentUserToken) {
+          request.options.headers['meteor-login-token'] = currentUserToken;
+          
           next();
-          return;
-        }
-
-        if (!request.options.headers) {
-          request.options.headers = new Headers();
-        }
-
-        request.options.headers.Authorization = currentUserToken;
-
-        next();
-      },
-    }]);
+        },
+      }]);
+    }
   }
 
   return networkInterface;
