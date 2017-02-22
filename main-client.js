@@ -14,8 +14,13 @@ const defaultNetworkInterfaceConfig = {
   batchInterval: 10, // default batch interval
 };
 
-export const createMeteorNetworkInterface = (givenConfig) => {
-  const config = _.extend(defaultNetworkInterfaceConfig, givenConfig);
+export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) => {
+  // create a new config object based on the default network interface config defined above
+  // and the custom network interface config passed to this function
+  const config = {
+    ...defaultNetworkInterfaceConfig, 
+    ...customNetworkInterfaceConfig,
+  };
 
   // absoluteUrl adds a '/', so let's remove it first
   let path = config.path;
@@ -85,19 +90,23 @@ export const createMeteorNetworkInterface = (givenConfig) => {
   return networkInterface;
 };
 
-export const meteorClientConfig = (networkInterfaceConfig) => {
-  return {
-    ssrMode: Meteor.isServer,
-    networkInterface: createMeteorNetworkInterface(networkInterfaceConfig),
-
-    // Default to using Mongo _id, must use _id for queries.
-    dataIdFromObject: (result) => {
-      if (result._id && result.__typename) {
-        const dataId = result.__typename + result._id;
-        return dataId;
-      }
-
-      return null;
-    },
-  };
+// default Apollo Client config object
+const defaultClientConfig = {
+  networkInterface: createMeteorNetworkInterface(),
+  ssrMode: Meteor.isServer,
+  dataIdFromObject: (result) => {
+    if (result._id && result.__typename) {
+      // Store normalization with typename + Meteor's Mongo _id
+      const dataId = result.__typename + result._id;
+      return dataId;
+    }
+    return null;
+  },
 };
+
+// create a new client config object based on the default Apollo Client config defined above
+// and the client config passed to this function 
+export const meteorClientConfig = (customClientConfig = {}) => ({
+  ...defaultClientConfig,
+  ...customClientConfig,
+});

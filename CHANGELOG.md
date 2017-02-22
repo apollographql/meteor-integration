@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+### Added
+
+-  Make it possible to extend the default Apollo Client & network interface configuration objects with any Apollo Client & interface options (+ some tests) [#70](https://github.com/apollographql/meteor-integration/pull/70)
+
+### Updated
+
+- Don't force `meteor/apollo` to update their NPM dependencies on Graphql-related packages, clean-up the User Accounts middleware [#74](https://github.com/apollographql/meteor-integration/pull/74)
 
 ## [0.3.1]
 ### Fixed

@@ -21,6 +21,7 @@ Package.onTest(function(api) {
            'practicalmeteor:mocha',
            'practicalmeteor:chai',
            'http',
+           'random',
            'accounts-base',
            'apollo']);
 

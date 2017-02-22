@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { assert } from 'meteor/practicalmeteor:chai';
 import { HTTP } from 'meteor/http';
+
+import { Random } from 'meteor/random';
 import { createApolloServer, createMeteorNetworkInterface, meteorClientConfig } from 'meteor/apollo';
 import { Accounts } from 'meteor/accounts-base';
 
@@ -27,12 +29,14 @@ Meteor.users.upsert(
   },
 );
   
+
 // Create schema & resolvers used in the tests
 const typeDefs = [`
   type Query {
     test(who: String): String
     author: Author
     person: Person
+    randomString: String
     currentUser: User
   }
     
@@ -51,16 +55,17 @@ const typeDefs = [`
   }
 `];
   
-  const resolvers = {
-    Query: {
-      test: (root, { who }) => `Hello ${who}`, 
-      author: __ => ({firstName: 'John', lastName: 'Smith'}),
-      person: __ => ({name: 'John Smith'}),
-      currentUser: (root, args, context) => context.user,
-    } 
-  };
-  
-  const schema = makeExecutableSchema({ typeDefs, resolvers, });
+const resolvers = {
+  Query: {
+    test: (root, { who }) => `Hello ${who}`, 
+    author: __ => ({firstName: 'John', lastName: 'Smith'}),
+    person: __ => ({name: 'John Smith'}),
+    randomString: __ => Random.id(),
+    currentUser: (root, args, context) => context.user,
+  },
+};
+
+const schema = makeExecutableSchema({ typeDefs, resolvers, });
 
 describe('GraphQL Server', () => {  
   it('should create an express graphql server accepting a test query', async function() {
