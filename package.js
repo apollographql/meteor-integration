@@ -8,7 +8,6 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.4.0.1');
   api.use(['ecmascript',
-           'underscore',
            'accounts-base',
            'tmeasday:check-npm-versions@0.3.1']);
 
