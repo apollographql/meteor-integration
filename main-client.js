@@ -1,53 +1,48 @@
-import './check-npm.js';
-
 import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-client';
 import 'isomorphic-fetch';
-import { Accounts } from 'meteor/accounts-base';
-import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
 
+import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base';
+
+import './check-npm.js';
+
+
+// default network interface configuration object
 const defaultNetworkInterfaceConfig = {
-  path: '/graphql', // default graphql server endpoint
-  opts: {}, // additional fetch options like `credentials` or `headers`
-  useMeteorAccounts: true, // if true, send an eventual Meteor login token to identify the current user with every request
-  batchingInterface: true, // use a BatchingNetworkInterface by default instead of a NetworkInterface
-  batchInterval: 10, // default batch interval
+  // default graphql server endpoint: ROOT_URL/graphql 
+  // ex: http://locahost:3000/graphql, or https://www.my-app.com/graphql
+  uri: Meteor.absoluteUrl('graphql'), 
+  // additional fetch options like `credentials` or `headers`
+  opts: {}, 
+  // enable the Meteor User Accounts middleware to identify the user with
+  // every request thanks to their login token
+  useMeteorAccounts: true,
+   // use a BatchingNetworkInterface by default instead of a NetworkInterface
+  batchingInterface: true,
+   // default batch interval
+  batchInterval: 10,
 };
 
+// create a pre-configured network interface
 export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) => {
-  // create a new config object based on the default network interface config defined above
-  // and the custom network interface config passed to this function
+  // create a new config object based on the default network interface config 
+  // defined above and the custom network interface config passed to this function
   const config = {
     ...defaultNetworkInterfaceConfig, 
     ...customNetworkInterfaceConfig,
   };
 
-  // absoluteUrl adds a '/', so let's remove it first
-  let path = config.path;
-  if (path[0] === '/') {
-    path = path.slice(1);
-  }
+  // this will be true true if a BatchingNetworkInterface is meant to be used 
+  // with a correct poll interval
+  const useBatchingInterface = config.batchingInterface && typeof config.batchInterval === 'number';
+  
+  // allow the use of a batching network interface
+  const interfaceToUse = useBatchingInterface ? createBatchingNetworkInterface : createNetworkInterface;
 
-  // allow the use of a batching network interface; if the options.batchingInterface is not specified, fallback to the standard network interface
-  const interfaceToUse = config.batchingInterface ? createBatchingNetworkInterface : createNetworkInterface;
+  // configure the (batching?) network interface with the config defined above
+  const networkInterface = interfaceToUse(config);
 
-  // default interface options
-  let interfaceOptions = {
-    uri: Meteor.absoluteUrl(path),
-  };
-
-  // if a BatchingNetworkInterface is used with a correct batch interval, add it to the options
-  if(config.batchingInterface && config.batchInterval) {
-    interfaceOptions.batchInterval = config.batchInterval;
-  }
-
-  // if 'fetch' has been configured to be called with specific opts, add it to the options
-  if(!_.isEmpty(config.opts)) {
-    interfaceOptions.opts = config.opts;
-  }
-
-  const networkInterface = interfaceToUse(interfaceOptions);
-
+  // handle the creation of a Meteor User Accounts middleware
   if (config.useMeteorAccounts) {
     // possible cookie login token created by meteorhacks:fast-render 
     // and passed to the Apollo Client during server-side rendering
@@ -58,6 +53,7 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
       // should this be handled somehow server-side?
       console.error('[Meteor Apollo Integration] The current user is not handled with your GraphQL requests: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.');
     } else {
+      // add a middleware handling the current user to the network interface
       networkInterface.use([{
         applyMiddleware(request, next) {
           
@@ -67,45 +63,52 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
           
           // define a current user token if existing 
           // ex: passed during server-side rendering or grabbed from local storage
-          let currentUserToken = localStorageLoginToken || loginToken;
+          const currentUserToken = localStorageLoginToken || loginToken;
           
+          // no token, meaning no user connected, just go to next possible middleware
           if (!currentUserToken) {
             next();
-            return;
           }
           
+          // create the header object if needed.
           if (!request.options.headers) {
-            // Create the header object if needed.
             request.options.headers = new Headers();
           }
-
+          
+          // add the login token to the request headers
           request.options.headers['meteor-login-token'] = currentUserToken;
           
+          // go to next middleware
           next();
         },
       }]);
     }
   }
-
+  
+  // return a configured network interface meant to be used by Apollo Client
   return networkInterface;
 };
 
-// default Apollo Client config object
+// default Apollo Client configuration object
 const defaultClientConfig = {
+  // default network interface preconfigured
   networkInterface: createMeteorNetworkInterface(),
+  // setup ssr mode if the client is configured server-side (ex: for SSR)
   ssrMode: Meteor.isServer,
+  // leverage store normalization
   dataIdFromObject: (result) => {
+    // store normalization with 'typename + Meteor's Mongo _id' if possible
     if (result._id && result.__typename) {
-      // Store normalization with typename + Meteor's Mongo _id
       const dataId = result.__typename + result._id;
       return dataId;
     }
+    // no store normalization
     return null;
   },
 };
 
-// create a new client config object based on the default Apollo Client config defined above
-// and the client config passed to this function 
+// create a new client config object based on the default Apollo Client config 
+// defined above and the client config passed to this function 
 export const meteorClientConfig = (customClientConfig = {}) => ({
   ...defaultClientConfig,
   ...customClientConfig,

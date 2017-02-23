@@ -1,6 +1,6 @@
 Package.describe({
   name: 'apollo',
-  version: '0.3.1',
+  version: '0.4.0',
   summary: ' 🚀 Add Apollo to your Meteor app',
   git: 'https://github.com/apollostack/meteor-integration'
 });
@@ -8,7 +8,6 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.4.0.1');
   api.use(['ecmascript',
-           'underscore',
            'accounts-base',
            'tmeasday:check-npm-versions@0.3.1']);
 
