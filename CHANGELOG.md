@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+
+## [0.4.0] - 2017-02-23
 ### Added
 
 -  Make it possible to extend the default Apollo Client & network interface configuration objects with any Apollo Client & interface options (+ some tests) [#70](https://github.com/apollographql/meteor-integration/pull/70)
