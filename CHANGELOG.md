@@ -4,10 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.4.1] - 2017-02-27
+### Changed
+- Pass `batchingInterval` to the batching network interface if configured to used it in `createMeteorNetworkInterface`.
+- Move `networkInterface` configuration with `createMeteorNetworkInterface()` from the `defaultClientConfig` to the `meteorClientConfig` function, so that it's only executed when needed and not on startup too...
+
 ## [0.4.0] - 2017-02-26
 ### Changed
 
 - The argument to `meteorClientConfig()` was changed: `meteorClientConfig(networkInterfaceConfig)` -> `meteorClientConfig(customClientConfig)`. If you previously did `meteorClientConfig({ batchingInterface: false })`, it should be changed to:
+- Don't force `meteor/apollo` to update their NPM dependencies on Graphql-related packages, clean-up the User Accounts middleware [#74](https://github.com/apollographql/meteor-integration/pull/74)
 
 ```js
 meteorClientConfig({
@@ -19,7 +25,6 @@ meteorClientConfig({
 
 -  Make it possible to extend the default Apollo Client & network interface configuration objects with any Apollo Client & interface options (+ some tests) [#70](https://github.com/apollographql/meteor-integration/pull/70)
 
-### Updated
 
 - Don't force `meteor/apollo` to update their NPM dependencies on Graphql-related packages, clean-up the User Accounts middleware [#74](https://github.com/apollographql/meteor-integration/pull/74)
 
