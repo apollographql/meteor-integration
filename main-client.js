@@ -44,6 +44,11 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
     uri: config.uri,
     opts: config.opts,
   }
+  
+  // http://dev.apollodata.com/core/network.html#BatchingExample
+  if (useBatchingInterface) {
+    interfaceArgument.batchInterval = config.batchInterval
+  }
 
   // configure the (batching?) network interface with the config defined above
   const networkInterface = interfaceToUse(interfaceArgument);
