@@ -4,7 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
-## [0.4.0] - 2017-02-23
+## [0.4.0] - 2017-02-26
+### Changed
+
+- The argument to `meteorClientConfig()` was changed: `meteorClientConfig(networkInterfaceConfig)` -> `meteorClientConfig(customClientConfig)`. If you previously did `meteorClientConfig({ batchingInterface: false })`, it should be changed to:
+
+```js
+meteorClientConfig({
+  networkInterface: createMeteorNetworkInterface({ batchingInterface: false })
+});
+```
+
 ### Added
 
 -  Make it possible to extend the default Apollo Client & network interface configuration objects with any Apollo Client & interface options (+ some tests) [#70](https://github.com/apollographql/meteor-integration/pull/70)
