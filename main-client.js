@@ -102,8 +102,6 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
 
 // default Apollo Client configuration object
 const defaultClientConfig = {
-  // default network interface preconfigured
-  networkInterface: createMeteorNetworkInterface(),
   // setup ssr mode if the client is configured server-side (ex: for SSR)
   ssrMode: Meteor.isServer,
   // leverage store normalization
@@ -121,6 +119,10 @@ const defaultClientConfig = {
 // create a new client config object based on the default Apollo Client config
 // defined above and the client config passed to this function
 export const meteorClientConfig = (customClientConfig = {}) => ({
+  // default network interface preconfigured, the network interface key is set 
+  // there to so that `createMeteorNetworkInterface` is executed only when 
+  // `meteorClientConfig` is called.
+  networkInterface: createMeteorNetworkInterface(),
   ...defaultClientConfig,
   ...customClientConfig,
 });
