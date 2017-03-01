@@ -3,7 +3,7 @@ import { createMeteorNetworkInterface, meteorClientConfig } from 'meteor/apollo'
 
 import ApolloClient from 'apollo-client';
 import gql from 'graphql-tag';
-import { print } from 'graphql-tag/printer';
+import { print } from 'graphql';
 
 // Some helper queries + results
 const authorQuery = gql`
@@ -199,16 +199,18 @@ describe('Batching network interface', function() {
 describe('User Accounts', function() {
   
   // create a test util to compare a test login token to the one stored in local storage
-  const TestLoginToken = () => {
+  const TestLoginToken = (batchingInterface = false) => {
     // default test login token value
     let token = null;
+    
+    const middlewareFn = batchingInterface ? 'applyBatchMiddleware' : 'applyMiddleware';
     
     return {
       // returns the value of the test login token
       get: () => token,
       // returns a middleware setting the test login token
       middleware: {
-        applyMiddleware: (request, next) => {
+        [middlewareFn]: (request, next) => {
           if (request.options.headers) {
             // grab the login token from the request and assign it to the test token
             token = request.options.headers['meteor-login-token'];
@@ -219,13 +221,36 @@ describe('User Accounts', function() {
     };
   };
   
-  it('should use Meteor Accounts if the option is set', async (done) => {
+  it('should use Meteor Accounts middleware if the option is set', async (done) => {
     try {
       // create a network interface using Meteor Accounts middleware
       const networkInterface = createMeteorNetworkInterface({ useMeteorAccounts: true });
       
       // create a test login token and assign its test middleware to the network interface
       const testLoginToken = new TestLoginToken();
+      networkInterface.use([testLoginToken.middleware]);
+      
+      // run a test query
+      const client = new ApolloClient({ networkInterface });
+      await client.query({query: authorQuery })
+      
+      // the login token sent with the request should be equal to the one in local storage
+      assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
+      done();
+    } catch(error) {
+      done(error);
+    }
+  });
+  
+  it('should use Meteor Accounts with a BatchMiddleware if the interface is batching', async (done) => {
+    try {
+      const batchingInterface = true;
+      
+      // create a network interface using Meteor Accounts middleware
+      const networkInterface = createMeteorNetworkInterface({ batchingInterface, useMeteorAccounts: true });
+      
+      // create a test login token and assign its test middleware to the network interface
+      const testLoginToken = new TestLoginToken(batchingInterface);
       networkInterface.use([testLoginToken.middleware]);
       
       // run a test query
