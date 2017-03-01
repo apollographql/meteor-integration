@@ -19,12 +19,14 @@
   },
   "homepage": "https://github.com/apollostack/meteor-integration#readme",
   "dependencies": {
-    "apollo-client": "^0.8.7",
+    "apollo-client": "^0.10.0",
     "body-parser": "^1.16.1",
     "express": "^4.14.0",
     "graphql": "^0.9.1",
-    "graphql-server-express": "^0.5.0",
-    "graphql-tools": "^0.10.0",
+    "graphql-server-express": "^0.6.0",
+    "graphql-tools": "^0.10.0"
+  },
+  "devDependencies": {
     "isomorphic-fetch": "^2.2.1"
   }
 }

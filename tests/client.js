@@ -4,7 +4,6 @@ import { createMeteorNetworkInterface, meteorClientConfig } from 'meteor/apollo'
 import ApolloClient from 'apollo-client';
 import gql from 'graphql-tag';
 import { print } from 'graphql-tag/printer';
-import 'isomorphic-fetch';
 
 // Some helper queries + results
 const authorQuery = gql`

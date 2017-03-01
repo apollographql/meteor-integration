@@ -1,5 +1,4 @@
 import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-client';
-import 'isomorphic-fetch';
 
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
@@ -83,7 +82,7 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
 
           // create the header object if needed.
           if (!request.options.headers) {
-            request.options.headers = new Headers();
+            request.options.headers = {};
           }
 
           // add the login token to the request headers
