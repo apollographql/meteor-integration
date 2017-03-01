@@ -71,22 +71,38 @@ const resolvers = {
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
+// utility function for async operations
+// note: putting it in another file (ex: ./utils.js) throw syntax errors because
+// of es6 modules or async/await. there isn't a need to configure babel just for
+// this utility function, is it?
+const handleDone = fn => async done => {
+  try {
+    await fn();
+    done();
+  } catch (e) {
+    done(e);
+  }
+};
+
 describe('GraphQL Server', () => {
-  it('should create an express graphql server accepting a test query', async function() {
-    // instantiate the apollo server
-    const apolloServer = createApolloServer({ schema });
+  it(
+    'should create an express graphql server accepting a test query',
+    handleDone(async () => {
+      // instantiate the apollo server
+      const apolloServer = createApolloServer({ schema });
 
-    // send a query to the server
-    const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
-      data: { query: '{ test(who: "World") }' },
-    });
+      // send a query to the server
+      const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
+        data: { query: '{ test(who: "World") }' },
+      });
 
-    assert.deepEqual(queryResult, {
-      data: {
-        test: 'Hello World',
-      },
-    });
-  });
+      assert.deepEqual(queryResult, {
+        data: {
+          test: 'Hello World',
+        },
+      });
+    })
+  );
 });
 
 describe('User Accounts', () => {
@@ -101,7 +117,7 @@ describe('User Accounts', () => {
 
   it(
     'should return the current user when passing the right login token to the network interface server-side',
-    async () => {
+    handleDone(async () => {
       // instantiate the apollo server
       const apolloServer = createApolloServer({ schema });
 
@@ -118,12 +134,12 @@ describe('User Accounts', () => {
       });
 
       assert.propertyVal(currentUser, 'username', 'test');
-    }
+    })
   );
 
   it(
     'should not return the current user when passing an invalid login token to the network interface server-side',
-    async () => {
+    handleDone(async () => {
       // instantiate the apollo server
       const apolloServer = createApolloServer({ schema });
 
@@ -140,6 +156,6 @@ describe('User Accounts', () => {
       });
 
       assert.isNull(currentUser);
-    }
+    })
   );
 });

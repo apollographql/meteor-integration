@@ -41,6 +41,19 @@ const personResult = {
 // Authenticate the test user
 Meteor._localStorage.setItem('Meteor.loginToken', 'foobar123');
 
+// utility function for async operations
+// note: putting it in another file (ex: ./utils.js) throw syntax errors because
+// of es6 modules or async/await. there isn't a need to configure babel just for
+// this utility function, is it?
+const handleDone = fn => async done => {
+  try {
+    await fn();
+    done();
+  } catch (e) {
+    done(e);
+  }
+};
+
 describe('Meteor Client config', () => {
   it('should accept a custom configuration object extending the default ones', () => {
     const clientConfig = meteorClientConfig({
@@ -102,34 +115,40 @@ describe('Query deduplication', () => {
       randomString
     }`;
 
-  it('does not deduplicate queries by default', () => {
-    // we have two responses for identical queries, but only the first should be requested.
-    // the second one should never make it through to the network interface.
-    const client = new ApolloClient(meteorClientConfig());
+  it(
+    'does not deduplicate queries by default',
+    handleDone(() => {
+      // we have two responses for identical queries, but only the first should be requested.
+      // the second one should never make it through to the network interface.
+      const client = new ApolloClient(meteorClientConfig());
 
-    const q1 = client.query({ query: randomQuery });
-    const q2 = client.query({ query: randomQuery });
+      const q1 = client.query({ query: randomQuery });
+      const q2 = client.query({ query: randomQuery });
 
-    // if deduplication happened, result2.data will equal data.
-    return Promise.all([q1, q2]).then(([result1, result2]) => {
-      assert.notDeepEqual(result1.data, result2.data);
-    });
-  });
+      // if deduplication happened, result2.data will equal data.
+      return Promise.all([q1, q2]).then(([result1, result2]) => {
+        assert.notDeepEqual(result1.data, result2.data);
+      });
+    })
+  );
 
-  it('deduplicates queries if the option is set', () => {
-    // we have two responses for identical queries, but only the first should be requested.
-    // the second one should never make it through to the network interface.
+  it(
+    'deduplicates queries if the option is set',
+    handleDone(() => {
+      // we have two responses for identical queries, but only the first should be requested.
+      // the second one should never make it through to the network interface.
 
-    const client = new ApolloClient(meteorClientConfig({ queryDeduplication: true }));
+      const client = new ApolloClient(meteorClientConfig({ queryDeduplication: true }));
 
-    const q1 = client.query({ query: randomQuery });
-    const q2 = client.query({ query: randomQuery });
+      const q1 = client.query({ query: randomQuery });
+      const q2 = client.query({ query: randomQuery });
 
-    // if deduplication didn't happen, result.data will equal data2.
-    return Promise.all([q1, q2]).then(([result1, result2]) => {
-      assert.deepEqual(result1.data, result2.data);
-    });
-  });
+      // if deduplication didn't happen, result.data will equal data2.
+      return Promise.all([q1, q2]).then(([result1, result2]) => {
+        assert.deepEqual(result1.data, result2.data);
+      });
+    })
+  );
 });
 
 describe('Batching network interface', function() {
