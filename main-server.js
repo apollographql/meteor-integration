@@ -95,7 +95,9 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
           const hashedToken = Accounts._hashLoginToken(loginToken);
 
           // get the possible current user from the database
-          const currentUser = await Meteor.users.findOne({
+          // note: no need of a fiber aware findOne + a fiber aware call break tests
+          // runned with practicalmeteor:mocha if eslint is enabled
+          const currentUser = await Meteor.users.rawCollection().findOne({
             'services.resume.loginTokens.hashedToken': hashedToken,
           });
 
@@ -156,5 +158,5 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   }
 
   // This binds the specified paths to the Express server running Apollo + GraphiQL
-  WebApp.connectHandlers.use(Meteor.bindEnvironment(graphQLServer));
+  WebApp.connectHandlers.use(graphQLServer);
 };
