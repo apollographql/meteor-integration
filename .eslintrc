@@ -17,12 +17,9 @@
   "settings": {
     "import/resolver": "meteor"
   },
-  "globals": {
-    "Package": true,
-    "$": true
-  },
   "rules": {
     "prettier/prettier": [
-      "error", {"singleQuote": true, "trailingComma": "es5", "printWidth": 100 }]
+      "error", {"singleQuote": true, "trailingComma": "es5", "printWidth": 100}
+    ]
   }
 }
