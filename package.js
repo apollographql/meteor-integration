@@ -9,8 +9,8 @@ Package.onUse(function(api) {
   api.versionsFrom('1.4.2');
   api.use(['ecmascript', 'accounts-base', 'tmeasday:check-npm-versions@0.3.1']);
 
-  api.mainModule('main-client.js', 'client');
-  api.mainModule('main-server.js', 'server');
+  api.mainModule('src/main-client.js', 'client');
+  api.mainModule('src/main-server.js', 'server');
 });
 
 Package.onTest(function(api) {
