@@ -199,7 +199,7 @@ describe('Batching network interface', function() {
 describe('User Accounts', function() {
   
   // create a test util to compare a test login token to the one stored in local storage
-  const TestLoginToken = (batchingInterface = false) => {
+  const TestLoginToken = (batchingInterface = true) => {
     // default test login token value
     let token = null;
     

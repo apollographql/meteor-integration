@@ -6,7 +6,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Use latest NPM dependencies, especially `apollo-cient@1.0.0-rc.0`.
 - Provide a middleware handling (`apply(Batch)Middleware`), related to  `apollo-client@1.0.0-rc.0`.
-- Use a classic network interface instead of a batching middleware interface, related to `apollo-client@1.0.0-rc.0`. If `meteor/apollo` users are using custom middlewares without specifying explictly the network interface, it won't break their app.
 - In tests, use `print` from `graphql` itself and not from `graphql-tag`, related to `graphql-tag@1.3` & upcoming `graphql-tag@2.0`.
 
 

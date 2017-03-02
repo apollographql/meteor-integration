@@ -16,8 +16,8 @@ const defaultNetworkInterfaceConfig = {
   // enable the Meteor User Accounts middleware to identify the user with
   // every request thanks to their login token
   useMeteorAccounts: true,
-   // use a BatchingNetworkInterface instead of a NetworkInterface
-  batchingInterface: false,
+   // use a BatchingNetworkInterface by default instead of a NetworkInterface
+  batchingInterface: true,
    // default batch interval
   batchInterval: 10,
 };
