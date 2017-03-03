@@ -3,8 +3,10 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+
+## [0.5.0] - 2017-03-03
 ### Changed
-- Use latest NPM dependencies, especially `apollo-cient@1.0.0-rc.0`.
+- Breaking: Use latest NPM dependencies, especially `apollo-cient@1.0.0-rc.0`.
 - Provide a middleware handling (`apply(Batch)Middleware`), related to  `apollo-client@1.0.0-rc.0`.
 - In tests, use `print` from `graphql` itself and not from `graphql-tag`, related to `graphql-tag@1.3` & upcoming `graphql-tag@2.0`.
 

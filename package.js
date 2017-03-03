@@ -1,6 +1,6 @@
 Package.describe({
   name: 'apollo',
-  version: '0.4.1',
+  version: '0.5.0',
   summary: ' 🚀 Add Apollo to your Meteor app',
   git: 'https://github.com/apollostack/meteor-integration'
 });
