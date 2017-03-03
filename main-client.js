@@ -62,13 +62,10 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
       // note: as it's not possible to stop a request,
       // should this be handled somehow server-side?
       console.error('[Meteor Apollo Integration] The current user is not handled with your GraphQL requests: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.');
-    } else {
-      // dynamic middleware function name depending on the interface used
-      const applyMiddlewareFn = useBatchingInterface ? 'applyBatchMiddleware' : 'applyMiddleware';
-      
+    } else {      
       // add a middleware handling the current user to the network interface
       networkInterface.use([{
-        [applyMiddlewareFn](request, next) {
+        applyBatchMiddleware(request, next) {
 
           // Meteor accounts-base login token stored in local storage,
           // only exists client-side as of Meteor 1.4, will exist with Meteor 1.5
