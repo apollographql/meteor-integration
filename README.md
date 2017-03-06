@@ -11,6 +11,8 @@ Check out the **[code tour](https://www.codetours.xyz/tour/xavcz/meteor-apollo-c
 
 # Package dev
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/apollographql/meteor-integration.svg)](https://greenkeeper.io/)
+
 ## Tests
 
 ```bash
