@@ -16,7 +16,7 @@ before_script:
 script: 
   - spacejam test-packages ./ --driver-package=practicalmeteor:mocha-console-runner
 
-sudo: false
+sudo: required
 env:
   - CXX=g++-4.8
 addons:
