@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/apollographql/meteor-integration.svg?branch=master)](https://travis-ci.org/apollographql/meteor-integration)
+
 Use the [Apollo GraphQL](http://dev.apollodata.com/) client and server in your [Meteor](https://www.meteor.com/) app.
 
 ```sh
@@ -14,7 +16,7 @@ Check out the **[code tour](https://www.codetours.xyz/tour/xavcz/meteor-apollo-c
 ## Tests
 
 ```bash
-git clone git@github.com:apollostack/meteor-integration.git
+git clone https://github.com/apollostack/meteor-integration.git
 cd meteor-integration
 npm install
 npm run test
