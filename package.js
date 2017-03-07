@@ -19,6 +19,7 @@ Package.onTest(function(api) {
   api.use(['ecmascript',
            'practicalmeteor:mocha',
            'practicalmeteor:chai',
+           'practicalmeteor:mocha-console-runner',
            'http',
            'random',
            'accounts-base',

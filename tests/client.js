@@ -221,69 +221,65 @@ describe('User Accounts', function() {
     };
   };
   
-  it('should use Meteor Accounts middleware if the option is set', async (done) => {
-    try {
-      // create a network interface using Meteor Accounts middleware
-      const networkInterface = createMeteorNetworkInterface({ useMeteorAccounts: true });
-      
-      // create a test login token and assign its test middleware to the network interface
-      const testLoginToken = new TestLoginToken();
-      networkInterface.use([testLoginToken.middleware]);
-      
-      // run a test query
-      const client = new ApolloClient({ networkInterface });
-      await client.query({query: authorQuery })
-      
-      // the login token sent with the request should be equal to the one in local storage
-      assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
-      done();
-    } catch(error) {
-      done(error);
-    }
+  it('should use Meteor Accounts middleware if the option is set', (done) => {
+    // create a network interface using Meteor Accounts middleware
+    const networkInterface = createMeteorNetworkInterface({ useMeteorAccounts: true });
+    
+    // create a test login token and assign its test middleware to the network interface
+    const testLoginToken = new TestLoginToken();
+    networkInterface.use([testLoginToken.middleware]);
+    
+    // run a test query
+    const client = new ApolloClient({ networkInterface });
+    
+    client.query({query: authorQuery })
+      .then(response => {
+        // the login token sent with the request should be equal to the one in local storage
+        assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
+        done();
+      })
+      .catch(error => done(error));
   });
   
-  it('should use Meteor Accounts with a BatchMiddleware if the interface is batching', async (done) => {
-    try {
-      const batchingInterface = true;
-      
-      // create a network interface using Meteor Accounts middleware
-      const networkInterface = createMeteorNetworkInterface({ batchingInterface, useMeteorAccounts: true });
-      
-      // create a test login token and assign its test middleware to the network interface
-      const testLoginToken = new TestLoginToken(batchingInterface);
-      networkInterface.use([testLoginToken.middleware]);
-      
-      // run a test query
-      const client = new ApolloClient({ networkInterface });
-      await client.query({query: authorQuery })
-      
-      // the login token sent with the request should be equal to the one in local storage
-      assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
-      done();
-    } catch(error) {
-      done(error);
-    }
+  it('should use Meteor Accounts with a "normal middleware" if the interface is not batching', (done) => {
+    const batchingInterface = false;
+    
+    // create a network interface using Meteor Accounts middleware
+    const networkInterface = createMeteorNetworkInterface({ batchingInterface, useMeteorAccounts: true });
+    
+    // create a test login token and assign its test middleware to the network interface
+    const testLoginToken = new TestLoginToken(batchingInterface);
+    networkInterface.use([testLoginToken.middleware]);
+    
+    // run a test query
+    const client = new ApolloClient({ networkInterface });
+    client.query({query: authorQuery })
+      .then(response => {
+        // the login token sent with the request should be equal to the one in local storage
+        assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
+        done();
+      })
+      .catch(error => done(error));
+    
   });
   
-  it('should not use Meteor Accounts if the option is unset', async (done) => {
-    try {
-      // create a network interface NOT using Meteor Accounts middleware
-      const networkInterface = createMeteorNetworkInterface({ useMeteorAccounts: false });
-      
-      // create a test login token and assign its test middleware to the network interface
-      const testLoginToken = new TestLoginToken();
-      networkInterface.use([testLoginToken.middleware]);
-      
-      // run a test query
-      const client = new ApolloClient({ networkInterface });
-      await client.query({query: authorQuery })
-      
-      // there shouldn't be any login token sent with the request
-      assert.isNull(testLoginToken.get());      
-      done();
-    } catch(error) {
-      done(error);
-    }
+  it('should not use Meteor Accounts if the option is unset', (done) => {
+    // create a network interface NOT using Meteor Accounts middleware
+    const networkInterface = createMeteorNetworkInterface({ useMeteorAccounts: false });
+    
+    // create a test login token and assign its test middleware to the network interface
+    const testLoginToken = new TestLoginToken();
+    networkInterface.use([testLoginToken.middleware]);
+    
+    // run a test query
+    const client = new ApolloClient({ networkInterface });
+    client.query({query: authorQuery })
+      .then(response => {
+        // there shouldn't be any login token sent with the request
+        assert.isNull(testLoginToken.get());      
+        done();
+      })
+      .catch(error => done(error));
   });
   
   it('should not use Meteor Accounts middleware when a login token is set directly from the client', () => {

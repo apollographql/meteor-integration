@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+  - "4.0"
+
+cache:
+   directories:
+      - node_modules
+      - $HOME/.meteor/
+
+before_install:
+   - npm install -g spacejam
+   - curl https://install.meteor.com | /bin/sh
+   - sudo ln -s $HOME/.meteor/meteor /usr/local/bin/meteor
+before_script:
+  - npm install
+script: 
+  - spacejam test-packages ./ --driver-package=practicalmeteor:mocha-console-runner
+
+sudo: false
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8

@@ -27,6 +27,7 @@
     "graphql-tools": "^0.10.0"
   },
   "devDependencies": {
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "spacejam": "^1.6.1"
   }
 }
