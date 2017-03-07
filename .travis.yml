@@ -10,7 +10,6 @@ cache:
 before_install:
    - npm install -g spacejam
    - curl https://install.meteor.com | /bin/sh
-   - sudo ln -s /usr/local/bin/meteor $HOME/.meteor/meteor
 before_script:
   - npm install
 script: 
