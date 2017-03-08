@@ -6,6 +6,9 @@
     "test": "tests"
   },
   "scripts": {
+    "lint": "eslint --quiet --ext .js .",
+    "prettier": "prettier --write \"src/*.js\" \"tests/*.js\" --single-quote=true --trailing-comma=es5 --print-width=100",
+    "pretest": "npm run lint",
     "test": "meteor test-packages ./ --driver-package practicalmeteor:mocha"
   },
   "repository": {
@@ -27,7 +30,15 @@
     "graphql-tools": "^0.10.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.16.1",
+    "eslint-import-resolver-meteor": "^0.3.3",
+    "eslint-plugin-import": "^1.14.0",
+    "eslint-plugin-meteor": "4.0.0",
+    "eslint-plugin-prettier": "^2.0.1",
     "isomorphic-fetch": "^2.2.1",
+    "prettier": "^0.20.0",
     "spacejam": "^1.6.1"
   }
 }

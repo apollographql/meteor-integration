@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+### Added
+- Move logic code to `/src`.
+- Use `rawCollection` method on `Meteor.users` for the current user lookup, to allow the tests to pass (also no need to wrap the GraphQL server in `Meteor.bindEnvironment` as it no more a Fibers-aware code). 
+
+### Added
+- Set up ESLint with prettier & Meteor settings.
+- Provide `handleDone` utility for asynchronous tests which to catch errors.
 
 ## [0.5.0] - 2017-03-03
 ### Changed

@@ -1,9 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { assert } from 'meteor/practicalmeteor:chai';
 import { HTTP } from 'meteor/http';
-
 import { Random } from 'meteor/random';
-import { createApolloServer, createMeteorNetworkInterface, meteorClientConfig } from 'meteor/apollo';
+import {
+  createApolloServer,
+  createMeteorNetworkInterface,
+  meteorClientConfig,
+} from 'meteor/apollo';
 import { Accounts } from 'meteor/accounts-base';
 
 import { makeExecutableSchema } from 'graphql-tools';
@@ -18,20 +21,20 @@ Meteor.users.upsert(
     username: 'test',
     services: {
       resume: {
-  			loginTokens: [
-  				{
-  					when: new Date(),
-  					hashedToken: Accounts._hashLoginToken('foobar123'),
-  				},
+        loginTokens: [
+          {
+            when: new Date(),
+            hashedToken: Accounts._hashLoginToken('foobar123'),
+          },
         ],
       },
     },
-  },
+  }
 );
-  
 
 // Create schema & resolvers used in the tests
-const typeDefs = [`
+const typeDefs = [
+  `
   type Query {
     test(who: String): String
     author: Author
@@ -53,38 +56,53 @@ const typeDefs = [`
     _id: String
     username: String
   }
-`];
-  
+`,
+];
+
 const resolvers = {
   Query: {
-    test: (root, { who }) => `Hello ${who}`, 
-    author: __ => ({firstName: 'John', lastName: 'Smith'}),
-    person: __ => ({name: 'John Smith'}),
+    test: (root, { who }) => `Hello ${who}`,
+    author: __ => ({ firstName: 'John', lastName: 'Smith' }),
+    person: __ => ({ name: 'John Smith' }),
     randomString: __ => Random.id(),
     currentUser: (root, args, context) => context.user,
   },
 };
 
-const schema = makeExecutableSchema({ typeDefs, resolvers, });
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-describe('GraphQL Server', () => {  
-  it('should create an express graphql server accepting a test query', async function() {
-    
-    // instantiate the apollo server
-    const apolloServer = createApolloServer({ schema, });
-    
-    // send a query to the server
-    const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
-      data: { query: '{ test(who: "World") }' }
-    });
-    
-    assert.deepEqual(queryResult, {
-      data: {
-        test: 'Hello World'
-      }
-    });
-    
-  });
+// utility function for async operations
+// note: putting it in another file (ex: ./utils.js) throw syntax errors because
+// of es6 modules or async/await. there isn't a need to configure babel just for
+// this utility function, is it?
+const handleDone = fn => async done => {
+  try {
+    await fn();
+    done();
+  } catch (e) {
+    done(e);
+  }
+};
+
+describe('GraphQL Server', () => {
+  it(
+    'should create an express graphql server accepting a test query',
+    handleDone(async () => {
+      // instantiate the apollo server
+      const apolloServer = createApolloServer({ schema });
+
+      // send a query to the server
+      const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
+        data: { query: '{ test(who: "World") }' },
+      });
+
+      assert.deepEqual(queryResult, {
+        data: {
+          test: 'Hello World',
+        },
+      });
+    })
+  );
 });
 
 describe('User Accounts', () => {
@@ -93,41 +111,51 @@ describe('User Accounts', () => {
       useMeteorAccounts: true,
       loginToken: 'xyz',
     });
-    
+
     assert.lengthOf(networkInterface._middlewares, 1);
   });
-  
-  it('should return the current user when passing the right login token to the network interface server-side', async () => {
-    // instantiate the apollo server
-    const apolloServer = createApolloServer({ schema, });
-    
-    const networkInterface = createMeteorNetworkInterface({
-      useMeteorAccounts: true,
-      loginToken: 'foobar123',
-    });
-    
-    const client = new ApolloClient(meteorClientConfig({ networkInterface }));
-    
-    // send a query to the server
-    const { data: { currentUser } } = await client.query({ query: gql`{ currentUser { username } }` });
-    
-    assert.propertyVal(currentUser, 'username', 'test');
-  });
-  
-  it('should not return the current user when passing an invalid login token to the network interface server-side', async () => {
-    // instantiate the apollo server
-    const apolloServer = createApolloServer({ schema, });
-    
-    const networkInterface = createMeteorNetworkInterface({
-      useMeteorAccounts: true,
-      loginToken: 'xyz',
-    });
-    
-    const client = new ApolloClient(meteorClientConfig({ networkInterface }));
-    
-    // send a query to the server
-    const { data: { currentUser } } = await client.query({ query: gql`{ currentUser { username } }` });
-    
-    assert.isNull(currentUser);
-  });
+
+  it(
+    'should return the current user when passing the right login token to the network interface server-side',
+    handleDone(async () => {
+      // instantiate the apollo server
+      const apolloServer = createApolloServer({ schema });
+
+      const networkInterface = createMeteorNetworkInterface({
+        useMeteorAccounts: true,
+        loginToken: 'foobar123',
+      });
+
+      const client = new ApolloClient(meteorClientConfig({ networkInterface }));
+
+      // send a query to the server
+      const { data: { currentUser } } = await client.query({
+        query: gql`{ currentUser { username } }`,
+      });
+
+      assert.propertyVal(currentUser, 'username', 'test');
+    })
+  );
+
+  it(
+    'should not return the current user when passing an invalid login token to the network interface server-side',
+    handleDone(async () => {
+      // instantiate the apollo server
+      const apolloServer = createApolloServer({ schema });
+
+      const networkInterface = createMeteorNetworkInterface({
+        useMeteorAccounts: true,
+        loginToken: 'xyz',
+      });
+
+      const client = new ApolloClient(meteorClientConfig({ networkInterface }));
+
+      // send a query to the server
+      const { data: { currentUser } } = await client.query({
+        query: gql`{ currentUser { username } }`,
+      });
+
+      assert.isNull(currentUser);
+    })
+  );
 });
