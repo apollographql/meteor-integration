@@ -1,6 +1,8 @@
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
+import { SubscriptionManager } from 'graphql-subscriptions';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
@@ -26,6 +28,13 @@ const defaultServerConfig = {
   // GraphiQL options (default: log the current user in your request)
   graphiqlOptions: {
     passHeader: "'meteor-login-token': localStorage['Meteor.loginToken']",
+  },
+  subscriptionSetupFunctions: {},
+  subscriptionLifecycle: {
+    onConnect: (connectionParams, webSocket) => {
+      // xxx: should handle the current user
+      // xxx: should handle the context
+    },
   },
 };
 
@@ -64,24 +73,24 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   // enhance the GraphQL server with possible express middlewares
   config.configServer(graphQLServer);
 
+  // graphqlExpress can accept a function returning the option object
+  const customOptionsObject = typeof customOptions === 'function'
+    ? customOptions(req)
+    : customOptions;
+
+  // create a new apollo options object based on the default apollo options
+  // defined above and the custom apollo options passed to this function
+  const options = {
+    ...defaultGraphQLOptions,
+    ...customOptionsObject,
+  };
+
   // GraphQL endpoint, enhanced with JSON body parser
   graphQLServer.use(
     config.path,
     bodyParser.json(),
     graphqlExpress(async req => {
       try {
-        // graphqlExpress can accept a function returning the option object
-        const customOptionsObject = typeof customOptions === 'function'
-          ? customOptions(req)
-          : customOptions;
-
-        // create a new apollo options object based on the default apollo options
-        // defined above and the custom apollo options passed to this function
-        const options = {
-          ...defaultGraphQLOptions,
-          ...customOptionsObject,
-        };
-
         // get the login token from the headers request, given by the Meteor's
         // network interface middleware if enabled
         const loginToken = req.headers['meteor-login-token'];
@@ -157,6 +166,31 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
     );
   }
 
-  // This binds the specified paths to the Express server running Apollo + GraphiQL
+  // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
+
+  // a data publication mechanism is set up, add subscription manager & server!
+  if (options.pubsub) {
+    // create the subscription manager thanks to the schema & pubsub options
+    const subscriptionManager = new SubscriptionManager({
+      schema: options.schema,
+      pubsub: options.pubsub,
+      // eventual publication filtering
+      setupFunction: config.subscriptionSetupFunctions,
+    });
+
+    // start up a subscription server
+    new SubscriptionServer(
+      {
+        subscriptionManager,
+        // add eventual configured lifecycle events
+        ...config.subscriptionLifecycle,
+      },
+      {
+        // bind the subscription server to Meteor WebApp
+        server: WebApp.httpServer,
+        path: '/subscriptions',
+      }
+    );
+  }
 };

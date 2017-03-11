@@ -1,4 +1,5 @@
 import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-client';
+import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-transport-ws';
 
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
@@ -19,6 +20,8 @@ const defaultNetworkInterfaceConfig = {
   batchingInterface: true,
   // default batch interval
   batchInterval: 10,
+  // enable enhanced apollo network interface with a websocket client
+  enableSubscriptions: false,
 };
 
 // create a pre-configured network interface
@@ -103,7 +106,29 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
   }
 
   // return a configured network interface meant to be used by Apollo Client
-  return networkInterface;
+  // with or without subscriptions, depending on enableSubscriptions param
+  if (config.enableSubscriptions) {
+    // get a ws:// url from the ROOT_URL
+    const wsUrl = Meteor.absoluteUrl('subscriptions').replace(/^http/, 'ws');
+
+    // create a websocket client
+    const wsClient = new SubscriptionClient(wsUrl, {
+      reconnect: true,
+      // xxx: should handle the current user
+      // connectionParams: {
+      //   meteorLoginToken,
+      // },
+    });
+
+    // plug the graphql subscriptions
+    const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(networkInterface, wsClient);
+
+    // return an enhanced interface with subscriptions
+    return networkInterfaceWithSubscriptions;
+  } else {
+    // return an interface without subscriptions
+    return networkInterface;
+  }
 };
 
 // default Apollo Client configuration object
