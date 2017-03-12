@@ -4,6 +4,7 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 
+import { getMeteorLoginToken } from './accounts';
 import './check-npm.js';
 
 // default network interface configuration object
@@ -58,17 +59,12 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
 
   // handle the creation of a Meteor User Accounts middleware
   if (config.useMeteorAccounts) {
-    // possible cookie login token created by meteorhacks:fast-render
-    // and passed to the Apollo Client during server-side rendering
-    const { loginToken } = config;
+    // get the current user token if defined
+    // note: will throw an error if someone tries to specify the login token
+    // manually from the client
+    try {
+      const meteorLoginToken = getMeteorLoginToken(config);
 
-    if (Meteor.isClient && loginToken) {
-      // note: as it's not possible to stop a request,
-      // should this be handled somehow server-side?
-      console.error(
-        '[Meteor Apollo Integration] The current user is not handled with your GraphQL requests: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.'
-      );
-    } else {
       // dynamic middleware function name depending on the interface used
       const applyMiddlewareFn = useBatchingInterface ? 'applyBatchMiddleware' : 'applyMiddleware';
 
@@ -76,16 +72,8 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
       networkInterface.use([
         {
           [applyMiddlewareFn](request, next) {
-            // Meteor accounts-base login token stored in local storage,
-            // only exists client-side as of Meteor 1.4, will exist with Meteor 1.5
-            const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
-
-            // define a current user token if existing
-            // ex: passed during server-side rendering or grabbed from local storage
-            const currentUserToken = localStorageLoginToken || loginToken;
-
             // no token, meaning no user connected, just go to next possible middleware
-            if (!currentUserToken) {
+            if (!meteorLoginToken) {
               next();
             }
 
@@ -95,13 +83,17 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
             }
 
             // add the login token to the request headers
-            request.options.headers['meteor-login-token'] = currentUserToken;
+            request.options.headers['meteor-login-token'] = meteorLoginToken;
 
             // go to next middleware
             next();
           },
         },
       ]);
+    } catch (error) {
+      // catch the potential error sent by getMeteorLoginToken if a login token
+      // is manually set client-side
+      console.error(error);
     }
   }
 
@@ -111,13 +103,15 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
     // get a ws:// url from the ROOT_URL
     const wsUrl = Meteor.absoluteUrl('subscriptions').replace(/^http/, 'ws');
 
+    // pass the login
+    const connectionParams = config.useMeteorAccounts
+      ? { meteorLoginToken: getMeteorLoginToken(config) }
+      : {};
+
     // create a websocket client
     const wsClient = new SubscriptionClient(wsUrl, {
       reconnect: true,
-      // xxx: should handle the current user
-      // connectionParams: {
-      //   meteorLoginToken,
-      // },
+      connectionParams,
     });
 
     // plug the graphql subscriptions

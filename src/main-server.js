@@ -6,9 +6,8 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
-import { check } from 'meteor/check';
-import { Accounts } from 'meteor/accounts-base';
 
+import { addCurrentUserToContext } from './accounts';
 import './check-npm.js';
 
 // import the configuration functions from the client so they can be used
@@ -30,12 +29,7 @@ const defaultServerConfig = {
     passHeader: "'meteor-login-token': localStorage['Meteor.loginToken']",
   },
   subscriptionSetupFunctions: {},
-  subscriptionLifecycle: {
-    onConnect: (connectionParams, webSocket) => {
-      // xxx: should handle the current user
-      // xxx: should handle the context
-    },
-  },
+  subscriptionLifecycle: {},
 };
 
 // default graphql options to enhance the graphQLExpress server
@@ -95,49 +89,14 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
         // network interface middleware if enabled
         const loginToken = req.headers['meteor-login-token'];
 
-        // there is a possible current user connected!
-        if (loginToken) {
-          // throw an error if the token is not a string
-          check(loginToken, String);
-
-          // the hashed token is the key to find the possible current user in the db
-          const hashedToken = Accounts._hashLoginToken(loginToken);
-
-          // get the possible current user from the database
-          // note: no need of a fiber aware findOne + a fiber aware call break tests
-          // runned with practicalmeteor:mocha if eslint is enabled
-          const currentUser = await Meteor.users.rawCollection().findOne({
-            'services.resume.loginTokens.hashedToken': hashedToken,
-          });
-
-          // the current user exists, add their information to the resolvers context
-          if (currentUser) {
-            // find the right login token corresponding, the current user may have
-            // several sessions logged on different browsers / computers
-            const tokenInformation = currentUser.services.resume.loginTokens.find(
-              tokenInfo => tokenInfo.hashedToken === hashedToken
-            );
-
-            // get an exploitable token expiration date
-            const expiresAt = Accounts._tokenExpiration(tokenInformation.when);
-
-            // true if the token is expired
-            const isExpired = expiresAt < new Date();
-
-            // if the token is still valid, give access to the current user
-            // information in the resolvers context
-            if (!isExpired) {
-              options.context = {
-                ...options.context,
-                user: currentUser,
-                userId: currentUser._id,
-              };
-            }
-          }
-        }
+        // plug the current user & the user id to the context
+        const newContext = await addCurrentUserToContext(options.context, loginToken);
 
         // return the configured options to be used by the graphql server
-        return options;
+        return {
+          ...options,
+          context: newContext,
+        };
       } catch (error) {
         // something went bad when configuring the graphql server, we do not
         // swallow the error and display it in the server-side logs
@@ -183,8 +142,23 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
     new SubscriptionServer(
       {
         subscriptionManager,
-        // add eventual configured lifecycle events
-        ...config.subscriptionLifecycle,
+        // on connect subscription lifecycle event
+        onConnect: async (connectionParams, webSocket) => {
+          // if a meteor login token is passed from the client with a relevant token
+          if (connectionParams.meteorLoginToken) {
+            try {
+              return await addCurrentUserToContext(
+                options.context,
+                connectionParams.meteorLoginToken
+              );
+            } catch (error) {
+              console.error(
+                '[Meteor Apollo Integration] Something bad happened when handling subscriptions:',
+                error
+              );
+            }
+          }
+        },
       },
       {
         // bind the subscription server to Meteor WebApp
