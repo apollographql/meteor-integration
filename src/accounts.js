@@ -23,6 +23,8 @@ export const getMeteorLoginToken = (config = {}) => {
   return localStorageLoginToken || loginToken;
 };
 
+// take the existing context and return a new extended context with the current
+// user if relevant (i.e. valid login token)
 export const addCurrentUserToContext = async (context, loginToken) => {
   // there is a possible current user connected!
   if (loginToken) {
@@ -39,7 +41,7 @@ export const addCurrentUserToContext = async (context, loginToken) => {
       'services.resume.loginTokens.hashedToken': hashedToken,
     });
 
-    // the current user exists, add their information to the resolvers context
+    // the current user exists
     if (currentUser) {
       // find the right login token corresponding, the current user may have
       // several sessions logged on different browsers / computers

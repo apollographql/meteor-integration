@@ -135,7 +135,7 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
       schema: options.schema,
       pubsub: options.pubsub,
       // eventual publication filtering
-      setupFunction: config.subscriptionSetupFunctions,
+      setupFunctions: config.subscriptionSetupFunctions,
     });
 
     // start up a subscription server
@@ -144,20 +144,13 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
         subscriptionManager,
         // on connect subscription lifecycle event
         onConnect: async (connectionParams, webSocket) => {
-          // if a meteor login token is passed from the client with a relevant token
-          if (connectionParams.meteorLoginToken) {
-            try {
-              return await addCurrentUserToContext(
-                options.context,
-                connectionParams.meteorLoginToken
-              );
-            } catch (error) {
-              console.error(
-                '[Meteor Apollo Integration] Something bad happened when handling subscriptions:',
-                error
-              );
-            }
-          }
+          // if a meteor login token is passed to the connection params from
+          // the client, add the current user to the subscription context
+          const subscriptionContext = connectionParams.meteorLoginToken
+            ? await addCurrentUserToContext(options.context, connectionParams.meteorLoginToken)
+            : options.context;
+
+          return subscriptionContext;
         },
       },
       {
