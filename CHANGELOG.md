@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file. [*File synt
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
+
+## [0.6.0] - 2017-03-16
 ### Changed
 - Move logic code to `/src`.
 - Use `rawCollection` method on `Meteor.users` for the current user lookup, to allow the tests to pass (also no need to wrap the GraphQL server in `Meteor.bindEnvironment` as it no more a Fibers-aware code). 
