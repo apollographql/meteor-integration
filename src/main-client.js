@@ -4,7 +4,6 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 
-import { getMeteorLoginToken } from './accounts';
 import './check-npm.js';
 
 // default network interface configuration object
@@ -23,6 +22,9 @@ const defaultNetworkInterfaceConfig = {
   batchInterval: 10,
   // enable enhanced apollo network interface with a websocket client
   enableSubscriptions: false,
+  // get a ws:// url from the ROOT_URL
+  // ex: ws://locahost:3000/subscriptions
+  websocketUri: Meteor.absoluteUrl('subscriptions').replace(/^http/, 'ws'),
 };
 
 // create a pre-configured network interface
@@ -100,16 +102,13 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
   // return a configured network interface meant to be used by Apollo Client
   // with or without subscriptions, depending on enableSubscriptions param
   if (config.enableSubscriptions) {
-    // get a ws:// url from the ROOT_URL
-    const wsUrl = Meteor.absoluteUrl('subscriptions').replace(/^http/, 'ws');
-
     // pass the login
     const connectionParams = config.useMeteorAccounts
       ? { meteorLoginToken: getMeteorLoginToken(config) }
       : {};
 
     // create a websocket client
-    const wsClient = new SubscriptionClient(wsUrl, {
+    const wsClient = new SubscriptionClient(config.websocketUri, {
       reconnect: true,
       connectionParams,
     });
@@ -151,3 +150,24 @@ export const meteorClientConfig = (customClientConfig = {}) => ({
   ...defaultClientConfig,
   ...customClientConfig,
 });
+
+// grab the token from the storage or config to be used in the network interface creation
+const getMeteorLoginToken = (config = {}) => {
+  // possible cookie login token created by meteorhacks:fast-render
+  // and passed to the Apollo Client during server-side rendering
+  const { loginToken = null } = config;
+
+  if (Meteor.isClient && loginToken) {
+    throw Error(
+      '[Meteor Apollo Integration] The current user is not handled with your GraphQL operations: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.'
+    );
+  }
+
+  // Meteor accounts-base login token stored in local storage,
+  // only exists client-side as of Meteor 1.4, will exist with Meteor 1.5
+  const localStorageLoginToken = Meteor.isClient && Accounts._storedLoginToken();
+
+  // return a meteor login token if existing
+  // ex: grabbed from local storage or passed during server-side rendering
+  return localStorageLoginToken || loginToken;
+};
