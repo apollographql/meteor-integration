@@ -4,7 +4,7 @@ import { checkNpmVersions } from 'meteor/tmeasday:check-npm-versions';
 if (Meteor.isClient) {
   checkNpmVersions(
     {
-      'apollo-client': '^0.10.0',
+      'apollo-client': '^1.0.0-rc.2',
     },
     'apollo'
   );
@@ -15,7 +15,9 @@ if (Meteor.isClient) {
       'body-parser': '^1.15.2',
       express: '^4.14.0',
       graphql: '^0.9.0',
+      'graphql-subscriptions': '^0.3.0',
       'graphql-tools': '^0.10.0',
+      'subscriptions-transport-ws': '^0.5.5-alpha.0',
     },
     'apollo'
   );

@@ -1,11 +1,13 @@
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
+import { SubscriptionManager } from 'graphql-subscriptions';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
-import { check } from 'meteor/check';
 import { Accounts } from 'meteor/accounts-base';
+import { check } from 'meteor/check';
 
 import './check-npm.js';
 
@@ -27,6 +29,9 @@ const defaultServerConfig = {
   graphiqlOptions: {
     passHeader: "'meteor-login-token': localStorage['Meteor.loginToken']",
   },
+  subscriptionsPath: '/subscriptions',
+  subscriptionSetupFunctions: {},
+  subscriptionLifecycle: {},
 };
 
 // default graphql options to enhance the graphQLExpress server
@@ -64,71 +69,36 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   // enhance the GraphQL server with possible express middlewares
   config.configServer(graphQLServer);
 
+  // graphqlExpress can accept a function returning the option object
+  const customOptionsObject = typeof customOptions === 'function'
+    ? customOptions(req)
+    : customOptions;
+
+  // create a new apollo options object based on the default apollo options
+  // defined above and the custom apollo options passed to this function
+  const options = {
+    ...defaultGraphQLOptions,
+    ...customOptionsObject,
+  };
+
   // GraphQL endpoint, enhanced with JSON body parser
   graphQLServer.use(
     config.path,
     bodyParser.json(),
     graphqlExpress(async req => {
       try {
-        // graphqlExpress can accept a function returning the option object
-        const customOptionsObject = typeof customOptions === 'function'
-          ? customOptions(req)
-          : customOptions;
-
-        // create a new apollo options object based on the default apollo options
-        // defined above and the custom apollo options passed to this function
-        const options = {
-          ...defaultGraphQLOptions,
-          ...customOptionsObject,
-        };
-
         // get the login token from the headers request, given by the Meteor's
         // network interface middleware if enabled
         const loginToken = req.headers['meteor-login-token'];
 
-        // there is a possible current user connected!
-        if (loginToken) {
-          // throw an error if the token is not a string
-          check(loginToken, String);
-
-          // the hashed token is the key to find the possible current user in the db
-          const hashedToken = Accounts._hashLoginToken(loginToken);
-
-          // get the possible current user from the database
-          // note: no need of a fiber aware findOne + a fiber aware call break tests
-          // runned with practicalmeteor:mocha if eslint is enabled
-          const currentUser = await Meteor.users.rawCollection().findOne({
-            'services.resume.loginTokens.hashedToken': hashedToken,
-          });
-
-          // the current user exists, add their information to the resolvers context
-          if (currentUser) {
-            // find the right login token corresponding, the current user may have
-            // several sessions logged on different browsers / computers
-            const tokenInformation = currentUser.services.resume.loginTokens.find(
-              tokenInfo => tokenInfo.hashedToken === hashedToken
-            );
-
-            // get an exploitable token expiration date
-            const expiresAt = Accounts._tokenExpiration(tokenInformation.when);
-
-            // true if the token is expired
-            const isExpired = expiresAt < new Date();
-
-            // if the token is still valid, give access to the current user
-            // information in the resolvers context
-            if (!isExpired) {
-              options.context = {
-                ...options.context,
-                user: currentUser,
-                userId: currentUser._id,
-              };
-            }
-          }
-        }
+        // plug the current user & the user id to the context
+        const newContext = await addCurrentUserToContext(options.context, loginToken);
 
         // return the configured options to be used by the graphql server
-        return options;
+        return {
+          ...options,
+          context: newContext,
+        };
       } catch (error) {
         // something went bad when configuring the graphql server, we do not
         // swallow the error and display it in the server-side logs
@@ -157,6 +127,90 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
     );
   }
 
-  // This binds the specified paths to the Express server running Apollo + GraphiQL
+  // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
+
+  // a data publication mechanism is set up, add subscription manager & server!
+  if (options.pubsub) {
+    // create the subscription manager thanks to the schema & pubsub options
+    const subscriptionManager = new SubscriptionManager({
+      schema: options.schema,
+      pubsub: options.pubsub,
+      // eventual publication filtering
+      setupFunctions: config.subscriptionSetupFunctions,
+    });
+
+    // start up a subscription server
+    new SubscriptionServer(
+      {
+        subscriptionManager,
+        // on connect subscription lifecycle event
+        onConnect: async (connectionParams, webSocket) => {
+          // if a meteor login token is passed to the connection params from
+          // the client, add the current user to the subscription context
+          const subscriptionContext = connectionParams.meteorLoginToken
+            ? await addCurrentUserToContext(options.context, connectionParams.meteorLoginToken)
+            : options.context;
+
+          return subscriptionContext;
+        },
+        // additional subscriptions lifecycle
+        ...config.subscriptionLifecycle,
+      },
+      {
+        // bind the subscription server to Meteor WebApp
+        server: WebApp.httpServer,
+        path: config.subscriptionsPath,
+      }
+    );
+  }
+};
+
+// take the existing context and return a new extended context with the current
+// user if relevant (i.e. valid login token)
+const addCurrentUserToContext = async (context, loginToken) => {
+  // there is a possible current user connected!
+  if (loginToken) {
+    // throw an error if the token is not a string
+    check(loginToken, String);
+
+    // the hashed token is the key to find the possible current user in the db
+    const hashedToken = Accounts._hashLoginToken(loginToken);
+
+    // get the possible current user from the database
+    // note: no need of a fiber aware findOne + a fiber aware call break tests
+    // runned with practicalmeteor:mocha if eslint is enabled
+    const currentUser = await Meteor.users.rawCollection().findOne({
+      'services.resume.loginTokens.hashedToken': hashedToken,
+    });
+
+    // the current user exists
+    if (currentUser) {
+      // find the right login token corresponding, the current user may have
+      // several sessions logged on different browsers / computers
+      const tokenInformation = currentUser.services.resume.loginTokens.find(
+        tokenInfo => tokenInfo.hashedToken === hashedToken
+      );
+
+      // get an exploitable token expiration date
+      const expiresAt = Accounts._tokenExpiration(tokenInformation.when);
+
+      // true if the token is expired
+      const isExpired = expiresAt < new Date();
+
+      // if the token is still valid, give access to the current user
+      // information in the resolvers context
+      if (!isExpired) {
+        // return a new context object with the current user & her id
+        return {
+          ...context,
+          user: currentUser,
+          userId: currentUser._id,
+        };
+      }
+    }
+  }
+
+  // return the context as passed
+  return context;
 };
