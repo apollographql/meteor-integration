@@ -154,6 +154,8 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
 
           return subscriptionContext;
         },
+        // additional subscriptions lifecycle
+        ...config.subscriptionLifecycle,
       },
       {
         // bind the subscription server to Meteor WebApp
