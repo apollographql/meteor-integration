@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.6.1] - 2017-03-18
+### Changed
+- Depends on latest `apollo-client`: version 1.0.0-rc.3. Also update `graphql-subscriptions` (note: dependency on this latter package should be removed on next release, see [discussion](https://github.com/apollographql/core-docs/pull/260)).
+
 ## [0.6.0] - 2017-03-16
 ### Changed
 - Move logic code to `/src`.

@@ -86,15 +86,14 @@ const resolvers = {
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 // utility function for async operations
-const handleDone = fn =>
-  async done => {
-    try {
-      await fn();
-      done();
-    } catch (e) {
-      done(e);
-    }
-  };
+const handleDone = fn => async done => {
+  try {
+    await fn();
+    done();
+  } catch (e) {
+    done(e);
+  }
+};
 
 describe('GraphQL Server', () => {
   it(
