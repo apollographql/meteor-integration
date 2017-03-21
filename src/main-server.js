@@ -69,24 +69,24 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   // enhance the GraphQL server with possible express middlewares
   config.configServer(graphQLServer);
 
-  // graphqlExpress can accept a function returning the option object
-  const customOptionsObject = typeof customOptions === 'function'
-    ? customOptions(req)
-    : customOptions;
-
-  // create a new apollo options object based on the default apollo options
-  // defined above and the custom apollo options passed to this function
-  const options = {
-    ...defaultGraphQLOptions,
-    ...customOptionsObject,
-  };
-
   // GraphQL endpoint, enhanced with JSON body parser
   graphQLServer.use(
     config.path,
     bodyParser.json(),
     graphqlExpress(async req => {
       try {
+        // graphqlExpress can accept a function returning the option object
+        const customOptionsObject = typeof customOptions === 'function'
+          ? customOptions(req)
+          : customOptions;
+
+        // create a new apollo options object based on the default apollo options
+        // defined above and the custom apollo options passed to this function
+        const options = {
+          ...defaultGraphQLOptions,
+          ...customOptionsObject,
+        };
+
         // get the login token from the headers request, given by the Meteor's
         // network interface middleware if enabled
         const loginToken = req.headers['meteor-login-token'];

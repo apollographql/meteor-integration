@@ -114,6 +114,25 @@ describe('GraphQL Server', () => {
       });
     })
   );
+
+  it(
+    'should work when passing options as a function',
+    handleDone(async () => {
+      // instantiate the apollo server with options as a function
+      const apolloServer = createApolloServer(req => ({ schema }));
+
+      // send a query to the server
+      const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
+        data: { query: '{ test(who: "World") }' },
+      });
+
+      assert.deepEqual(queryResult, {
+        data: {
+          test: 'Hello World',
+        },
+      });
+    })
+  );
 });
 
 describe('User Accounts', () => {
