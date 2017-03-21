@@ -65,8 +65,6 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
     // note: will throw an error if someone tries to specify the login token
     // manually from the client
     try {
-      const meteorLoginToken = getMeteorLoginToken(config);
-
       // dynamic middleware function name depending on the interface used
       const applyMiddlewareFn = useBatchingInterface ? 'applyBatchMiddleware' : 'applyMiddleware';
 
@@ -74,6 +72,9 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
       networkInterface.use([
         {
           [applyMiddlewareFn](request, next) {
+            // get the login token for the request
+            const meteorLoginToken = getMeteorLoginToken(config);
+
             // no token, meaning no user connected, just go to next possible middleware
             if (!meteorLoginToken) {
               next();
