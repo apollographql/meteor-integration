@@ -129,16 +129,6 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
 const defaultClientConfig = {
   // setup ssr mode if the client is configured server-side (ex: for SSR)
   ssrMode: Meteor.isServer,
-  // leverage store normalization
-  dataIdFromObject: result => {
-    // store normalization with 'typename + Meteor's Mongo _id' if possible
-    if (result._id && result.__typename) {
-      const dataId = result.__typename + result._id;
-      return dataId;
-    }
-    // no store normalization
-    return null;
-  },
 };
 
 // create a new client config object based on the default Apollo Client config
