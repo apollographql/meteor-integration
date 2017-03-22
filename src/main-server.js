@@ -128,7 +128,7 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
 
 // take the existing context and return a new extended context with the current
 // user if relevant (i.e. valid login token)
-const addCurrentUserToContext = async (context, loginToken) => {
+export const addCurrentUserToContext = async (context, loginToken) => {
   // there is a possible current user connected!
   if (loginToken) {
     // throw an error if the token is not a string

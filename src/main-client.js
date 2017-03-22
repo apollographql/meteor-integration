@@ -55,10 +55,15 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
 
   // handle the creation of a Meteor User Accounts middleware
   if (config.useMeteorAccounts) {
-    // get the current user token if defined
-    // note: will throw an error if someone tries to specify the login token
-    // manually from the client
     try {
+      // throw an error if someone tries to specify the login token
+      // manually from the client
+      if (Meteor.isClient && config.loginToken) {
+        throw Error(
+          '[Meteor Apollo Integration] The current user is not handled with your GraphQL operations: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.'
+        );
+      }
+
       // dynamic middleware function name depending on the interface used
       const applyMiddlewareFn = useBatchingInterface ? 'applyBatchMiddleware' : 'applyMiddleware';
 
@@ -66,7 +71,7 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
       networkInterface.use([
         {
           [applyMiddlewareFn](request, next) {
-            // get the login token for the request
+            // get the login token on a per-request basis
             const meteorLoginToken = getMeteorLoginToken(config);
 
             // no token, meaning no user connected, just go to next possible middleware
@@ -88,8 +93,7 @@ export const createMeteorNetworkInterface = (customNetworkInterfaceConfig = {}) 
         },
       ]);
     } catch (error) {
-      // catch the potential error sent by getMeteorLoginToken if a login token
-      // is manually set client-side
+      // catch the potential error sent by if a login token is manually set client-side
       console.error(error);
     }
   }
@@ -115,16 +119,10 @@ export const meteorClientConfig = (customClientConfig = {}) => ({
 });
 
 // grab the token from the storage or config to be used in the network interface creation
-const getMeteorLoginToken = (config = {}) => {
+export const getMeteorLoginToken = (config = {}) => {
   // possible cookie login token created by meteorhacks:fast-render
   // and passed to the Apollo Client during server-side rendering
   const { loginToken = null } = config;
-
-  if (Meteor.isClient && loginToken) {
-    throw Error(
-      '[Meteor Apollo Integration] The current user is not handled with your GraphQL operations: you are trying to pass a login token to an Apollo Client instance defined client-side. This is only allowed during server-side rendering, please check your implementation.'
-    );
-  }
 
   // Meteor accounts-base login token stored in local storage,
   // only exists client-side as of Meteor 1.4, will exist with Meteor 1.5
