@@ -12,10 +12,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { makeExecutableSchema } from 'graphql-tools';
 import { ApolloClient } from 'apollo-client';
 import gql from 'graphql-tag';
-import { PubSub } from 'graphql-subscriptions';
 import 'isomorphic-fetch';
-
-// TODO: fix tests for subscriptions
 
 // note: we are using several times `createApolloServer` in this file. It feels
 // like the `/graphql` endpoint gets overwritten each time. Is there a way to
@@ -49,10 +46,6 @@ const typeDefs = [
     randomString: String
     currentUser: User
   }
-  
-  # type Subscription {
-  #   test(who: String): String
-  # }
     
   type Author {
     firstName: String
@@ -78,9 +71,6 @@ const resolvers = {
     randomString: __ => Random.id(),
     currentUser: (root, args, context) => context.user,
   },
-  // Subscription: {
-  //   test: (root, { who }) => `Hello ${who}`,
-  // }
 };
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -101,6 +91,25 @@ describe('GraphQL Server', () => {
     handleDone(async () => {
       // instantiate the apollo server
       const apolloServer = createApolloServer({ schema });
+
+      // send a query to the server
+      const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
+        data: { query: '{ test(who: "World") }' },
+      });
+
+      assert.deepEqual(queryResult, {
+        data: {
+          test: 'Hello World',
+        },
+      });
+    })
+  );
+
+  it(
+    'should work when passing options as a function',
+    handleDone(async () => {
+      // instantiate the apollo server with options as a function
+      const apolloServer = createApolloServer(req => ({ schema }));
 
       // send a query to the server
       const { data: queryResult } = await HTTP.post(Meteor.absoluteUrl('/graphql'), {
@@ -170,20 +179,3 @@ describe('User Accounts', () => {
     })
   );
 });
-
-// describe('GraphQL Server with subscriptions', () => {
-//   it(
-//     'should create an express graphql server with a pubsub mechanism having access to the context',
-//     handleDone(async () => {
-//       const pubsub = new PubSub();
-//
-//       // instantiate the apollo server
-//       const apolloServer = createApolloServer({
-//         schema,
-//         pubsub,
-//       });
-//
-//       // holy cow, how do you test that?
-//     })
-//   );
-// });

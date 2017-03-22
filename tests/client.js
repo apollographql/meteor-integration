@@ -5,8 +5,6 @@ import ApolloClient from 'apollo-client';
 import gql from 'graphql-tag';
 import { print } from 'graphql';
 
-// TODO: fix tests for subscriptions
-
 // Some helper queries + results
 const authorQuery = gql`
   query {
@@ -162,37 +160,6 @@ describe('Batching network interface', function() {
     }
   );
 });
-
-// describe('Network interface with subscriptions', () => {
-//   it('creates a network interface with a SubscriptionClient', done => {
-//     const networkInterfaceWithSubscriptions = createMeteorNetworkInterface({
-//       enableSubscriptions: true,
-//     });
-//
-//     const client = new ApolloClient(
-//       meteorClientConfig({
-//         networkInterface: networkInterfaceWithSubscriptions,
-//       })
-//     );
-//
-//     const options = {
-//       query: gql`
-//         subscription test($who: String) {
-//           test(who: $who)
-//         }
-//       `,
-//       variables: { who: 'you!' },
-//     };
-//
-//     const sub = client.subscribe(options).subscribe({
-//       next(result) {
-//         assert.deepEqual(result, 'hello you!');
-//
-//         done();
-//       },
-//     });
-//   });
-// });
 
 describe('User Accounts', function() {
   // create a test util to compare a test login token to the one stored in local storage
