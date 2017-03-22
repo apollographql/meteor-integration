@@ -2,7 +2,14 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## vNEXT
+## [0.7.0] - 2017-03-22
+### Changed
+- No more `dataIdFromObject` pre-configuration: `apollo-client` does it for us.
+- Fix accounts client-side: the login token is handled per request and not per client, by looking for it directly in the middleware.
+- Fix options server-side (issue [#90](https://github.com/apollographql/core-docs/issues/90)).
+
+# Removed
+- Breaking: Subscriptions configuration are not any more handled in this package: this package is intended to *provide easy configuration of an Apollo client and its network interface to communicate with a GraphQL Express Server*. A new package is going to be created to configure GraphQL subscriptions in a Meteor context.
 
 ## [0.6.1] - 2017-03-18
 ### Changed
