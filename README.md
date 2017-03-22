@@ -4,7 +4,7 @@ Use the [Apollo GraphQL](http://dev.apollodata.com/) client and server in your [
 
 ```sh
 meteor add apollo
-meteor npm install --save apollo-client graphql-server-express express graphql graphql-tools body-parser subscriptions-transport-ws graphql-subscriptions
+meteor npm install --save apollo-client graphql-server-express express graphql graphql-tools body-parser
 ```
 
 Read **[the docs](http://dev.apollodata.com/core/meteor.html)**

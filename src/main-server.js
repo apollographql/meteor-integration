@@ -1,8 +1,6 @@
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import bodyParser from 'body-parser';
 import express from 'express';
-import { SubscriptionManager } from 'graphql-subscriptions';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
@@ -29,9 +27,6 @@ const defaultServerConfig = {
   graphiqlOptions: {
     passHeader: "'meteor-login-token': localStorage['Meteor.loginToken']",
   },
-  subscriptionsPath: '/subscriptions',
-  subscriptionSetupFunctions: {},
-  subscriptionLifecycle: {},
 };
 
 // default graphql options to enhance the graphQLExpress server
@@ -129,41 +124,6 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
 
   // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
-
-  // a data publication mechanism is set up, add subscription manager & server!
-  if (options.pubsub) {
-    // create the subscription manager thanks to the schema & pubsub options
-    const subscriptionManager = new SubscriptionManager({
-      schema: options.schema,
-      pubsub: options.pubsub,
-      // eventual publication filtering
-      setupFunctions: config.subscriptionSetupFunctions,
-    });
-
-    // start up a subscription server
-    new SubscriptionServer(
-      {
-        subscriptionManager,
-        // on connect subscription lifecycle event
-        onConnect: async (connectionParams, webSocket) => {
-          // if a meteor login token is passed to the connection params from
-          // the client, add the current user to the subscription context
-          const subscriptionContext = connectionParams.meteorLoginToken
-            ? await addCurrentUserToContext(options.context, connectionParams.meteorLoginToken)
-            : options.context;
-
-          return subscriptionContext;
-        },
-        // additional subscriptions lifecycle
-        ...config.subscriptionLifecycle,
-      },
-      {
-        // bind the subscription server to Meteor WebApp
-        server: WebApp.httpServer,
-        path: config.subscriptionsPath,
-      }
-    );
-  }
 };
 
 // take the existing context and return a new extended context with the current
