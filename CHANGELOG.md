@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## vNEXT
+
+## [0.7.1] - 2017-03-22
+### Changed
+- Update dependencies: `apollo-client@1.0.0-rc.9` & `graphql-tools@0.11.0`
+
 ## [0.7.0] - 2017-03-22
 ### Changed
 - No more `dataIdFromObject` pre-configuration: `apollo-client` does it for us.
