@@ -1,6 +1,6 @@
 {
   "name": "apollo-meteor-integration",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": " 🚀 Add Apollo to your Meteor app",
   "directories": {
     "test": "tests"
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/apollostack/meteor-integration#readme",
   "dependencies": {
-    "apollo-client": "next",
+    "apollo-client": "^1.0.0",
     "body-parser": "^1.16.1",
     "express": "^4.14.0",
     "graphql": "^0.9.1",

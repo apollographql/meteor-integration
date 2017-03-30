@@ -4,7 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
-## [0.7.1] - 2017-03-22
+## [0.7.2] - 2017-03-30
+### Changed
+- Invite the package's users to install `apollo-client@1.0.0`!
+
+## [0.7.1] - 2017-03-30
 ### Changed
 - Update dependencies: `apollo-client@1.0.0-rc.9` & `graphql-tools@0.11.0`
 
