@@ -7,7 +7,7 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.4.2');
-  api.use(['ecmascript', 'accounts-base', 'tmeasday:check-npm-versions@0.3.1']);
+  api.use(['ecmascript', 'accounts-base']);
 
   api.mainModule('src/main-client.js', 'client');
   api.mainModule('src/main-server.js', 'server');
