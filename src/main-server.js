@@ -7,8 +7,6 @@ import { WebApp } from 'meteor/webapp';
 import { Accounts } from 'meteor/accounts-base';
 import { check } from 'meteor/check';
 
-import './check-npm.js';
-
 // import the configuration functions from the client so they can be used
 // during server-side rendering for instance
 export { createMeteorNetworkInterface, meteorClientConfig } from './main-client';

@@ -3,8 +3,6 @@ import { createNetworkInterface, createBatchingNetworkInterface } from 'apollo-c
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 
-import './check-npm.js';
-
 // default network interface configuration object
 const defaultNetworkInterfaceConfig = {
   // default graphql server endpoint: ROOT_URL/graphql
