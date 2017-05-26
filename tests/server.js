@@ -45,17 +45,18 @@ const typeDefs = [
     person: Person
     randomString: String
     currentUser: User
+    testContextFn: String
   }
-    
+
   type Author {
     firstName: String
     lastName: String
   }
-  
+
   type Person {
     name: String
   }
-  
+
   type User {
     _id: String
     username: String
@@ -70,6 +71,7 @@ const resolvers = {
     person: __ => ({ name: 'John Smith' }),
     randomString: __ => Random.id(),
     currentUser: (root, args, context) => context.user,
+    testContextFn: (root, args, context) => context.dataFromUserContext,
   },
 };
 
@@ -176,6 +178,44 @@ describe('User Accounts', () => {
       });
 
       assert.isNull(currentUser);
+    })
+  );
+
+  it(
+    'should include user and added data in the context when passing options.context as a function',
+    handleDone(async () => {
+      // instantiate the apollo server with options.context as a function which adds an additional field including data
+      // from the user context
+      const apolloServer = createApolloServer(
+        {
+          schema,
+          context: context => {
+            const { user: { username } = {} } = context || {};
+            return {
+              ...context,
+              dataFromUserContext: username,
+            };
+          },
+        },
+        // NOTE: Had to use a unique path for this test, when run along with other tests on the same endpoint it was not
+        // working properly, but when running alone, it works. The options.context was being overwritten by other tests.
+        { path: '/contextFn' }
+      );
+
+      const networkInterface = createMeteorNetworkInterface({
+        useMeteorAccounts: true,
+        loginToken: 'foobar123',
+        uri: Meteor.absoluteUrl('contextFn'),
+      });
+
+      const client = new ApolloClient(meteorClientConfig({ networkInterface }));
+
+      // send a query to the server
+      const { data: { testContextFn } } = await client.query({
+        query: gql`{ testContextFn }`,
+      });
+
+      assert.equal(testContextFn, 'test');
     })
   );
 });
