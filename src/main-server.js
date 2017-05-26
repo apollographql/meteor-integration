@@ -85,8 +85,8 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
         const loginToken = req.headers['meteor-login-token'];
 
         // get the current user & the user id for the context
-        const userContext = await getUserForContext({}, loginToken);
-        
+        const userContext = await getUserForContext(loginToken);
+
         // context can accept a function returning the context object
         const context = typeof options.context === 'function'
           ? options.context(userContext)
@@ -128,7 +128,7 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   WebApp.connectHandlers.use(graphQLServer);
 };
 
-export const getUserForContext = async (context, loginToken) => {
+export const getUserForContext = async loginToken => {
   // there is a possible current user connected!
   if (loginToken) {
     // throw an error if the token is not a string
