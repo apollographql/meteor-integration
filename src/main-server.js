@@ -84,13 +84,18 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
         // network interface middleware if enabled
         const loginToken = req.headers['meteor-login-token'];
 
-        // plug the current user & the user id to the context
-        const newContext = await addCurrentUserToContext(options.context, loginToken);
+        // get the current user & the user id for the context
+        const userContext = await getUserForContext(loginToken);
+
+        // context can accept a function returning the context object
+        const context = typeof options.context === 'function'
+          ? options.context(userContext)
+          : { ...options.context, ...userContext };
 
         // return the configured options to be used by the graphql server
         return {
           ...options,
-          context: newContext,
+          context,
         };
       } catch (error) {
         // something went bad when configuring the graphql server, we do not
@@ -119,14 +124,11 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
       })
     );
   }
-
   // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
 };
 
-// take the existing context and return a new extended context with the current
-// user if relevant (i.e. valid login token)
-export const addCurrentUserToContext = async (context, loginToken) => {
+export const getUserForContext = async loginToken => {
   // there is a possible current user connected!
   if (loginToken) {
     // throw an error if the token is not a string
@@ -161,14 +163,21 @@ export const addCurrentUserToContext = async (context, loginToken) => {
       if (!isExpired) {
         // return a new context object with the current user & her id
         return {
-          ...context,
           user: currentUser,
           userId: currentUser._id,
         };
       }
     }
   }
-
-  // return the context as passed
   return context;
+};
+
+// take the existing context and return a new extended context with the current
+// user if relevant (i.e. valid login token)
+export const addCurrentUserToContext = async (context, loginToken) => {
+  const userContext = await getUserForContext(loginToken);
+  return {
+    ...context,
+    ...userContext,
+  };
 };
