@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.9.0] - 2017-05-27
+### Changed
+- Allow `context` option to be a function that accepts context with the current user, and returns final context.
+
+## [0.8.0] - 2017-05-16
+### Changed
+- Remove NPM warnings: just make it fail early if you don't have dependencies installed.
+
 ## [0.7.2] - 2017-03-30
 ### Changed
 - Invite the package's users to install `apollo-client@1.0.0`!
