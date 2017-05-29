@@ -169,7 +169,8 @@ export const getUserForContext = async loginToken => {
       }
     }
   }
-  return context;
+
+  return {};
 };
 
 // take the existing context and return a new extended context with the current

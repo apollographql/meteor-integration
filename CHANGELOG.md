@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [0.9.1] - 2017-05-27
+### Changed
+- Fix [#101](https://github.com/apollographql/core-docs/issues/101): return an empty object from `getUserContext` when nobody is authenticated.
+- Fixes lint issue on `package.js` (from previous version)
+- Automatic update of `.version` from latest Meteor version.
+
 ## [0.9.0] - 2017-05-27
 ### Changed
 - Allow `context` option to be a function that accepts context with the current user, and returns final context.
