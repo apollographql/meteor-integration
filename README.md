@@ -12,6 +12,30 @@ Read **[the docs](http://dev.apollodata.com/core/meteor.html)**
 Check out the **[code tour](https://www.codetours.xyz/tour/xavcz/meteor-apollo-codetour)** if you'd like to see how this small package is implemented.
 
 
+# Apollo Optics
+
+See below for a minimal example with Apollo Optics integration
+
+```js
+import { createApolloServer } from 'meteor/apollo';
+import OpticsAgent from 'optics-agent';
+
+import executableSchema from 'schema.js';
+
+OpticsAgent.instrumentSchema(executableSchema);
+
+createApolloServer(req => ({
+  schema: executableSchema,
+  context: {
+    opticsContext: OpticsAgent.context(req),
+  },
+}), {
+  configServer: (graphQLServer) => {
+    graphQLServer.use('/graphql', OpticsAgent.middleware());
+  },
+});
+```
+
 # Package dev
 
 ## Tests
