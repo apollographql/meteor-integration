@@ -126,6 +126,8 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   }
   // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
+     
+  return graphQLServer;
 };
 
 export const getUserForContext = async loginToken => {
