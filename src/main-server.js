@@ -89,7 +89,7 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
 
         // context can accept a function returning the context object
         const context = typeof options.context === 'function'
-          ? options.context(userContext)
+          ? await options.context(userContext)
           : { ...options.context, ...userContext };
 
         // return the configured options to be used by the graphql server
