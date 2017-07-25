@@ -182,7 +182,7 @@ describe('User Accounts', () => {
   );
 
   it(
-    'should include user and added data in the context when passing options.context as a function',
+    'should include user and added data in the context when passing options.context as a synchronous function',
     handleDone(async () => {
       // instantiate the apollo server with options.context as a function which adds an additional field including data
       // from the user context
@@ -194,6 +194,44 @@ describe('User Accounts', () => {
             return {
               ...context,
               dataFromUserContext: username,
+            };
+          },
+        },
+        // NOTE: Had to use a unique path for this test, when run along with other tests on the same endpoint it was not
+        // working properly, but when running alone, it works. The options.context was being overwritten by other tests.
+        { path: '/contextFn' }
+      );
+
+      const networkInterface = createMeteorNetworkInterface({
+        useMeteorAccounts: true,
+        loginToken: 'foobar123',
+        uri: Meteor.absoluteUrl('contextFn'),
+      });
+
+      const client = new ApolloClient(meteorClientConfig({ networkInterface }));
+
+      // send a query to the server
+      const { data: { testContextFn } } = await client.query({
+        query: gql`{ testContextFn }`,
+      });
+
+      assert.equal(testContextFn, 'test');
+    })
+  );
+
+  it(
+    'should include user and added data in the context when passing options.context as an asynchronous function',
+    handleDone(async () => {
+      // instantiate the apollo server with options.context as a function which adds an additional field including data
+      // from the user context
+      const apolloServer = createApolloServer(
+        {
+          schema,
+          context: async context => {
+            const { user: { username } = {} } = context || {};
+            return {
+              ...context,
+              dataFromUserContext: await Promise.resolve(username),
             };
           },
         },

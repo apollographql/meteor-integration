@@ -89,7 +89,7 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
 
         // context can accept a function returning the context object
         const context = typeof options.context === 'function'
-          ? options.context(userContext)
+          ? await options.context(userContext)
           : { ...options.context, ...userContext };
 
         // return the configured options to be used by the graphql server
@@ -126,8 +126,6 @@ export const createApolloServer = (customOptions = {}, customConfig = {}) => {
   }
   // this binds the specified paths to the Express server running Apollo + GraphiQL
   WebApp.connectHandlers.use(graphQLServer);
-     
-  return graphQLServer;
 };
 
 export const getUserForContext = async loginToken => {
