@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## vNEXT
 
+## [1.0.0] - 2017-07-27
+### BREAKING CHANGE
+- This package doesn't depend anymore on `graphql-server-express` but `apollo-server-express`. See this [blog post](https://dev-blog.apollodata.com/apollo-server-1-0-a-graphql-server-for-all-node-js-frameworks-2b37d3342f7c) 🚀
+
+### Added
+- Add support for an asynchronous context [#105](https://github.com/apollographql/meteor-integration/pull/105)
+
 ## [0.9.1] - 2017-05-27
 ### Changed
 - Fix [#101](https://github.com/apollographql/core-docs/issues/101): return an empty object from `getUserContext` when nobody is authenticated.
