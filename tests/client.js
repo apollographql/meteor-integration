@@ -12,7 +12,8 @@ const authorQuery = gql`
       firstName
       lastName
     }
-  }`;
+  }
+`;
 
 const authorResult = {
   data: {
@@ -28,7 +29,8 @@ const personQuery = gql`
     person {
       name
     }
-  }`;
+  }
+`;
 
 const personResult = {
   data: {
@@ -103,12 +105,7 @@ describe('Batching network interface', function() {
   // from apollo-client/test
   // Helper method that tests a roundtrip given a particular set of requests to the
   // batched network interface
-  const assertRoundtrip = (
-    {
-      requestResultPairs,
-      opts = {},
-    }
-  ) => {
+  const assertRoundtrip = ({ requestResultPairs, opts = {} }) => {
     const batchedNetworkInterface = createMeteorNetworkInterface({
       batchingInterface: true,
       opts,
@@ -128,37 +125,31 @@ describe('Batching network interface', function() {
       });
   };
 
-  it(
-    'should create a batching interface & correctly return the result for a single request',
-    () => {
-      return assertRoundtrip({
-        requestResultPairs: [
-          {
-            request: { query: authorQuery },
-            result: authorResult,
-          },
-        ],
-      });
-    }
-  );
+  it('should create a batching interface & correctly return the result for a single request', () => {
+    return assertRoundtrip({
+      requestResultPairs: [
+        {
+          request: { query: authorQuery },
+          result: authorResult,
+        },
+      ],
+    });
+  });
 
-  it(
-    'should should create a batching interface & correctly return the results for multiple requests',
-    () => {
-      return assertRoundtrip({
-        requestResultPairs: [
-          {
-            request: { query: authorQuery },
-            result: authorResult,
-          },
-          {
-            request: { query: personQuery },
-            result: personResult,
-          },
-        ],
-      });
-    }
-  );
+  it('should should create a batching interface & correctly return the results for multiple requests', () => {
+    return assertRoundtrip({
+      requestResultPairs: [
+        {
+          request: { query: authorQuery },
+          result: authorResult,
+        },
+        {
+          request: { query: personQuery },
+          result: personResult,
+        },
+      ],
+    });
+  });
 });
 
 describe('User Accounts', function() {
@@ -206,33 +197,30 @@ describe('User Accounts', function() {
       .catch(error => done(error));
   });
 
-  it(
-    'should use Meteor Accounts with a "normal middleware" if the interface is not batching',
-    done => {
-      const batchingInterface = false;
+  it('should use Meteor Accounts with a "normal middleware" if the interface is not batching', done => {
+    const batchingInterface = false;
 
-      // create a network interface using Meteor Accounts middleware
-      const networkInterface = createMeteorNetworkInterface({
-        batchingInterface,
-        useMeteorAccounts: true,
-      });
+    // create a network interface using Meteor Accounts middleware
+    const networkInterface = createMeteorNetworkInterface({
+      batchingInterface,
+      useMeteorAccounts: true,
+    });
 
-      // create a test login token and assign its test middleware to the network interface
-      const testLoginToken = new TestLoginToken(batchingInterface);
-      networkInterface.use([testLoginToken.middleware]);
+    // create a test login token and assign its test middleware to the network interface
+    const testLoginToken = new TestLoginToken(batchingInterface);
+    networkInterface.use([testLoginToken.middleware]);
 
-      // run a test query
-      const client = new ApolloClient({ networkInterface });
-      client
-        .query({ query: authorQuery })
-        .then(response => {
-          // the login token sent with the request should be equal to the one in local storage
-          assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
-          done();
-        })
-        .catch(error => done(error));
-    }
-  );
+    // run a test query
+    const client = new ApolloClient({ networkInterface });
+    client
+      .query({ query: authorQuery })
+      .then(response => {
+        // the login token sent with the request should be equal to the one in local storage
+        assert.equal(testLoginToken.get(), Meteor._localStorage.getItem('Meteor.loginToken'));
+        done();
+      })
+      .catch(error => done(error));
+  });
 
   it('should not use Meteor Accounts if the option is unset', done => {
     // create a network interface NOT using Meteor Accounts middleware
@@ -254,22 +242,19 @@ describe('User Accounts', function() {
       .catch(error => done(error));
   });
 
-  it(
-    'should not use Meteor Accounts middleware when a login token is set directly from the client',
-    () => {
-      // a note adressed to someone who runs tests and looks at the client-side console
-      console.log(
-        'Note: the error shown in the console below comes from the test "should not use Meteor Accounts middleware when a login token is set directly from the client".'
-      );
+  it('should not use Meteor Accounts middleware when a login token is set directly from the client', () => {
+    // a note adressed to someone who runs tests and looks at the client-side console
+    console.log(
+      'Note: the error shown in the console below comes from the test "should not use Meteor Accounts middleware when a login token is set directly from the client".'
+    );
 
-      // create an "invalid" network interface
-      const networkInterface = createMeteorNetworkInterface({
-        useMeteorAccounts: true,
-        loginToken: 'xyz',
-      });
+    // create an "invalid" network interface
+    const networkInterface = createMeteorNetworkInterface({
+      useMeteorAccounts: true,
+      loginToken: 'xyz',
+    });
 
-      // there shouldn't be any middleware (i.e. not the Meteor Accounts middleware) attached
-      assert.lengthOf(networkInterface._middlewares, 0);
-    }
-  );
+    // there shouldn't be any middleware (i.e. not the Meteor Accounts middleware) attached
+    assert.lengthOf(networkInterface._middlewares, 0);
+  });
 });

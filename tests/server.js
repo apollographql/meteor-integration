@@ -152,7 +152,13 @@ describe('User Accounts', () => {
 
       // send a query to the server
       const { data: { currentUser } } = await client.query({
-        query: gql`{ currentUser { username } }`,
+        query: gql`
+          {
+            currentUser {
+              username
+            }
+          }
+        `,
       });
 
       assert.propertyVal(currentUser, 'username', 'test');
@@ -174,7 +180,13 @@ describe('User Accounts', () => {
 
       // send a query to the server
       const { data: { currentUser } } = await client.query({
-        query: gql`{ currentUser { username } }`,
+        query: gql`
+          {
+            currentUser {
+              username
+            }
+          }
+        `,
       });
 
       assert.isNull(currentUser);
@@ -212,7 +224,11 @@ describe('User Accounts', () => {
 
       // send a query to the server
       const { data: { testContextFn } } = await client.query({
-        query: gql`{ testContextFn }`,
+        query: gql`
+          {
+            testContextFn
+          }
+        `,
       });
 
       assert.equal(testContextFn, 'test');
@@ -250,7 +266,11 @@ describe('User Accounts', () => {
 
       // send a query to the server
       const { data: { testContextFn } } = await client.query({
-        query: gql`{ testContextFn }`,
+        query: gql`
+          {
+            testContextFn
+          }
+        `,
       });
 
       assert.equal(testContextFn, 'test');
