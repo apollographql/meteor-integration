@@ -22,23 +22,23 @@
   },
   "homepage": "https://github.com/apollostack/meteor-integration#readme",
   "dependencies": {
-    "apollo-client": "^1.0.0",
-    "body-parser": "^1.16.1",
-    "express": "^4.14.0",
-    "graphql": "^0.9.1",
-    "graphql-server-express": "^0.6.0",
-    "graphql-tools": "^0.11.0"
+    "apollo-client": "^1.9.0-1",
+    "apollo-server-express": "^1.0.4",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "graphql": "^0.10.5",
+    "graphql-tools": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
-    "babel-eslint": "^6.1.2",
-    "eslint": "^3.16.1",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.3.0",
     "eslint-import-resolver-meteor": "^0.3.3",
-    "eslint-plugin-import": "^1.14.0",
-    "eslint-plugin-meteor": "4.0.0",
-    "eslint-plugin-prettier": "^2.0.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-meteor": "^4.1.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "isomorphic-fetch": "^2.2.1",
-    "prettier": "^0.20.0",
+    "prettier": "^1.5.3",
     "spacejam": "^1.6.1"
   }
 }
