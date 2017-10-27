@@ -7,7 +7,7 @@ import { Accounts } from 'meteor/accounts-base';
 const defaultNetworkInterfaceConfig = {
   // default graphql server endpoint: ROOT_URL/graphql
   // ex: http://locahost:3000/graphql, or https://www.my-app.com/graphql
-  uri: Meteor.absoluteUrl('graphql'),
+  uri: `${window.location.protocol}//${window.location.host}/graphql`,
   // additional fetch options like `credentials` or `headers`
   opts: {},
   // enable the Meteor User Accounts middleware to identify the user with
