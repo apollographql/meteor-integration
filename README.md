@@ -1,3 +1,7 @@
+**Note: This package supports Apollo Client 1.x**
+
+**For Apollo Client 2+, use [ddp-apollo](https://github.com/Swydo/ddp-apollo) or discuss a [new version of this package](https://github.com/apollographql/meteor-integration/issues/109)**
+
 [![Build Status](https://travis-ci.org/apollographql/meteor-integration.svg?branch=master)](https://travis-ci.org/apollographql/meteor-integration)
 
 Use the [Apollo GraphQL](http://dev.apollodata.com/) client and server in your [Meteor](https://www.meteor.com/) app.
