@@ -1,11 +1,11 @@
 
-> **Note: This package supports Apollo Client 2.x, to use Apollo Client 1.x, check out on the version `1.0.0`**
+> This package supports Apollo Client 2.x. To use Apollo Client 1.x, check out on the version `1.0.0`
 
 > A great alternative to this package is [ddp-apollo](https://github.com/Swydo/ddp-apollo)
 
 > We are actively looking for a new maintainer: https://github.com/apollographql/meteor-integration/issues/109
 
-Create an Apollo client & an Apollo server quickly:
+Create an Apollo client and server quickly:
 
 ### Client
 ```js
