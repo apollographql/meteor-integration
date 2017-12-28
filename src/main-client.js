@@ -25,18 +25,18 @@ export const createApolloClient = ({ link, cache }) =>
 
 export const createMeteorNetworkInterface = () => {
   throw new Error(
-    'We are glad you use the Meteor Accounts integration with Apollo, however Apollo do not support anymore `createNetworkInterface`. Please update to Apollo Client 2.0 by using the new method `createApolloClient` or revert this package to version 1.0'
+    '`createMeteorNetworkInterface()` is from v1 of this package. The API has changed to `createApolloClient()`.'
   );
 };
 
 export const meteorClientConfig = () => {
   throw new Error(
-    'We are glad you use the Meteor Accounts integration with Apollo, however Apollo do not support anymore `createNetworkInterface`. Please update to Apollo Client 2.0 by using the new method `createApolloClient` or revert this package to version 1.0'
+    '`meteorClientConfig()` is from v1 of this package. The API has changed to `createApolloClient()`.'
   );
 };
 
 export const getMeteorLoginToken = () => {
   throw new Error(
-    'We are glad you use the Meteor Accounts integration with Apollo, however Apollo do not support anymore `createNetworkInterface`. Please update to Apollo Client 2.0 by using the new method `createApolloClient` or revert this package to version 1.0'
+    '`getMeteorLoginToken` is from v1 of this package. Use `createApolloClient` or `meteorAccountsLink`.'
   );
 };
