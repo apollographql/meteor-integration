@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## vNEXT
+## [2.0.0]
+- Basic support for Apollo Client 2.0 with `createApolloClient`, and drop support for Apollo Client 1.0
 
 ## [1.0.0] - 2017-07-27
 ### BREAKING CHANGE
