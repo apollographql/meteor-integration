@@ -17,9 +17,9 @@ export const meteorAccountsLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-export const createApolloClient = ({ link, cache }) =>
+export const createApolloClient = ({ link, cache } = {}) =>
   new ApolloClient({
-    link: link || authLink.concat(new HttpLink({ uri: Meteor.absoluteUrl('graphql') })),
+    link: link || meteorAccountsLink.concat(new HttpLink({ uri: Meteor.absoluteUrl('graphql') })),
     cache: cache || new InMemoryCache(),
   });
 
