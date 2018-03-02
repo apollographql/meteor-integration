@@ -1,4 +1,3 @@
-null
     **Labels**
 
 - [ ] has-reproduction
