@@ -8,14 +8,7 @@
   "parserOptions": {
     "allowImportExportEverywhere": true
   },
-  "plugins": ["prettier"],
   "settings": {
     "import/resolver": "meteor"
-  },
-  "rules": {
-    "prettier/prettier": [
-      "error",
-      { "singleQuote": true, "trailingComma": "es5", "printWidth": 100 }
-    ]
   }
 }

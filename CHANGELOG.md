@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0]
+- New API, only providing a `getUser()` function on the server. Docs for setting up Apollo Server 2.0 and `apollo-boost`.
+
 ## [2.0.0]
 - Basic support for Apollo Client 2.0 with `createApolloClient`, and drop support for Apollo Client 1.0
 

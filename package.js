@@ -1,30 +1,30 @@
 Package.describe({
   name: 'apollo',
-  version: '2.0.0',
-  summary: ' 🚀 Add Apollo to your Meteor app',
+  version: '3.0.0',
+  summary: '🚀 Add Apollo to your Meteor app',
   git: 'https://github.com/apollostack/meteor-integration',
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.4.2');
-  api.use(['ecmascript', 'accounts-base']);
+  api.versionsFrom('1.4.2.2');
+  api.use(['ecmascript', 'accounts-base', 'check']);
 
-  api.mainModule('src/main-client.js', 'client');
-  api.mainModule('src/main-server.js', 'server');
+  api.mainModule('src/server.js', 'server');
+  api.mainModule('src/client.js', 'client', { lazy: true });
 });
+
+Npm.depends({
+  'apollo-link': '1.2.2'
+})
 
 Package.onTest(function(api) {
   api.use([
     'ecmascript',
-    'practicalmeteor:mocha',
+    'meteortesting:mocha',
     'practicalmeteor:chai',
-    'practicalmeteor:mocha-console-runner',
-    'http',
-    'random',
     'accounts-base',
     'apollo',
   ]);
 
-  api.mainModule('tests/client.js', 'client');
   api.mainModule('tests/server.js', 'server');
 });
