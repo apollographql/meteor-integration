@@ -1,4 +1,4 @@
-**[Documentation](https://www.apollographql.com/docs/react/recipes/meteor.html)**
+**[Documentation](https://github.com/apollographql/apollo-client/blob/lorensr/update-meteor-docs/docs/source/recipes/meteor.md)**
 
 ## Contributing 
 
