@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.1] - 2018-10-13
+### Fixed
+- Do not set auth header when not logged in [#131](https://github.com/apollographql/meteor-integration/pull/131)
+
 ## [3.0.0]
 - New API, only providing a `getUser()` function on the server. Docs for setting up Apollo Server 2.0 and `apollo-boost`.
 
