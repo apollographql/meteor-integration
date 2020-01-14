@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file. [*File syntax*](http://keepachangelog.com/).
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.0] - 2020-01-14
+- Update `apollo-link` to latest version (1.2.13) and bump package minor version to republish for Meteor 1.9.
+
 ## [3.0.1] - 2018-10-13
 ### Fixed
 - Do not set auth header when not logged in [#131](https://github.com/apollographql/meteor-integration/pull/131)
